@@ -4,6 +4,7 @@ import FilterComponent from "../../components/FilterComponent/FilterComponent";
 import styles from "./Phone.module.css";
 import PropTypes from "prop-types";
 import API_BASE_URL from "../../apiConfig";
+import REACT_APP_AUTH_TOKEN from "../../appToken";
 
 const Phone = ({ addedProductName }) => {
   const [allProducts, setAllProducts] = useState([]);
@@ -25,9 +26,9 @@ const Phone = ({ addedProductName }) => {
     try {
       const response = await fetch(`${API_BASE_URL}:7211/api/Fuji/products`, {
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiI2NWU4NGQ5MzEyMzZjMTU3MTAxYjJhMzkiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJVc2VyIiwiZXhwIjoxNzEwMzE3NDU4LCJpc3MiOiJNeUF1dGhTZXJ2ZXIiLCJhdWQiOiJNeUF1dGhDbGllbnQifQ.jp_fvRqH2vPznny2gpuFP5BJK8Yz_VDkpO57X-tn_D0`,
+          Authorization: `Bearer ${REACT_APP_AUTH_TOKEN} `,
         },
-      });
+      });eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
 
       if (response.ok) {
         const data = await response.json();
@@ -49,12 +50,12 @@ const Phone = ({ addedProductName }) => {
         return;
       }
 
-      let apiUrl = "https://localhost:7211/api/Fuji/products";
+      let apiUrl = `${API_BASE_URL}/api/Fuji/products`;
 
       if (filterParams.includes("keywords")) {
-        apiUrl = `https://localhost:7211/api/Fuji/search?${filterParams}`;
+        apiUrl = `${API_BASE_URL}/api/Fuji/search?${filterParams}`;
       } else if (filterParams.includes("brands")) {
-        apiUrl = `https://localhost:7211/api/Fuji/products/brand/${
+        apiUrl = `${API_BASE_URL}/api/Fuji/products/brand/${
           filterParams.split("=")[1]
         }`;
       }
@@ -106,7 +107,7 @@ const Phone = ({ addedProductName }) => {
               <div className={styles.productImage}>
                 {product.imageFileName && (
                   <img
-                    src={`https://localhost:7211/api/Fuji/getImage/${product.imageFileName}`}
+                    src={`${API_BASE_URL}/api/Fuji/getImage/${product.imageFileName}`}
                     alt={product.name}
                   />
                 )}

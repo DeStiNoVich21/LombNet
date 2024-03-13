@@ -1,71 +1,53 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-import styles from "./FilterComponent.module.css";
 
 const FilterComponent = ({ onFilterChange }) => {
-  const [filterValue, setFilterValue] = useState("");
-  const [brandFilters, setBrandFilters] = useState({
-    Nokia: false,
-    Xiaomi: false,
-    Iphone: false,
-  });
+  const [brand, setBrand] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
-  const handleInputChange = (e) => {
-    setFilterValue(e.target.value);
-  };
-
-  const handleBrandFilterChange = (brand) => {
-    setBrandFilters((prevFilters) => ({
-      ...prevFilters,
-      [brand]: !prevFilters[brand],
-    }));
-  };
-
-  const handleFilterApply = () => {
-    const selectedBrands = Object.keys(brandFilters).filter(
-      (brand) => brandFilters[brand]
-    );
-
+  const handleFilter = () => {
     let filterParams = "";
 
-    if (filterValue.trim() !== "") {
-      filterParams += `keywords=${encodeURIComponent(filterValue)}`;
+    if (brand) {
+      filterParams += `brand=${brand}`;
     }
 
-    if (selectedBrands.length > 0) {
-      filterParams += filterParams !== "" ? "&" : "";
-      filterParams += `brands=${selectedBrands.join(",")}`;
+    if (minPrice && maxPrice) {
+      filterParams += `&minPrice=${minPrice}&maxPrice=${maxPrice}`;
     }
 
     onFilterChange(filterParams);
   };
 
   return (
-    <div className={styles.filterContainer}>
-      <input
-        type="text"
-        value={filterValue}
-        onChange={handleInputChange}
-        placeholder="Введите параметры фильтрации"
-        className={styles.filterInput}
-      />
-      <div className={styles.brandFilterContainer}>
-        <label className={styles.brandFilterLabel}>Фильтр по бренду:</label>
-        {Object.keys(brandFilters).map((brand) => (
-          <span key={brand} className={styles.brandFilterOption}>
-            <input
-              type="checkbox"
-              checked={brandFilters[brand]}
-              onChange={() => handleBrandFilterChange(brand)}
-              className={styles.brandFilterCheckbox}
-            />
-            {brand}
-          </span>
-        ))}
+    <div>
+      <h3>Фильтр:</h3>
+      <div>
+        <label>Бренд:</label>
+        <input
+          type="text"
+          value={brand}
+          onChange={(e) => setBrand(e.target.value)}
+        />
       </div>
-      <button onClick={handleFilterApply} className={styles.applyFilterButton}>
-        Применить фильтр
-      </button>
+      <div>
+        <label>Минимальная цена:</label>
+        <input
+          type="number"
+          value={minPrice}
+          onChange={(e) => setMinPrice(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Максимальная цена:</label>
+        <input
+          type="number"
+          value={maxPrice}
+          onChange={(e) => setMaxPrice(e.target.value)}
+        />
+      </div>
+      <button onClick={handleFilter}>Применить фильтр</button>
     </div>
   );
 };

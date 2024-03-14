@@ -3,6 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { useUser } from "../../components/UserContext";
 import styles from "./Login.module.css";
+import Cookies from "js-cookie";
 import API_BASE_URL from "../../apiConfig";
 
 const Login = () => {
@@ -14,37 +15,36 @@ const Login = () => {
   const { loginUser } = useUser();
   const navigate = useNavigate();
 
-  // Состояние для хранения значения пароля с небольшой задержкой
-  const [passwordWithDelay, setPasswordWithDelay] = useState("");
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserData((prevData) => ({
       ...prevData,
       [name]: value,
     }));
-
-    // Устанавливаем значение пароля с задержкой (например, 500 миллисекунд)
-    setTimeout(() => {
-      setPasswordWithDelay(value);
-    }, 500);
   };
 
   const handleLogin = async () => {
     try {
-      // Используем значение пароля с задержкой
+      if (!userData.username || !userData.password) {
+        console.error("Имя пользователя и пароль обязательны для входа.");
+        return;
+      }
+
       const response = await axios.post(
         `${API_BASE_URL}/api/Authorization/Login`,
-        { ...userData, password: passwordWithDelay }
+        userData
       );
 
-      const authToken = response.data.token;
+      const encodedJwt = response.data.encodedJwt; // Получаем токен из ответа
 
-      // Сохраняем токен в localStorage
-      localStorage.setItem("authToken", authToken);
+      if (!encodedJwt) {
+        console.error("Токен аутентификации отсутствует в ответе сервера.");
+        return;
+      }
 
-      console.log("Вход выполнен успешно", response.data);
-      console.log(response.data.UserId);
+      Cookies.set("authToken", encodedJwt, { expires: 7 }); // Храним токен в куки на 7 дней
+
+      console.log("Вход выполнен успешно");
 
       loginUser(response.data);
 
@@ -68,6 +68,7 @@ const Login = () => {
             <input
               type="text"
               name="username"
+              value={userData.username}
               onChange={handleInputChange}
               className={styles.input}
             />
@@ -78,6 +79,7 @@ const Login = () => {
             <input
               type="password"
               name="password"
+              value={userData.password}
               onChange={handleInputChange}
               className={styles.input}
             />

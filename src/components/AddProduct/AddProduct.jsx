@@ -1,6 +1,7 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 import API_BASE_URL from "../../apiConfig";
+import Cookies from "js-cookie";
 
 const AddProduct = ({ onProductAdded }) => {
   const [formData, setFormData] = useState({
@@ -8,9 +9,6 @@ const AddProduct = ({ onProductAdded }) => {
     category: "",
     description: "",
     price: 0,
-    status: "Есть в наличии",
-    isDeleted: false,
-    lombardId: "123",
     brand: "",
     image: null,
   });
@@ -18,22 +16,16 @@ const AddProduct = ({ onProductAdded }) => {
   const categories = ["telephone", "laptop", "tablet", "headphones"];
   const brands = ["Iphone", "Samsung", "Xiaomi", "OPPO", "Nokia"];
 
-  const [requestToken, setRequestToken] = useState(null);
   const [categoryError, setCategoryError] = useState(false);
 
-  const token = localStorage.getItem("authToken");
-
-  if (!token) {
-    console.error("Authentication token is missing.");
-  }
+  const token = Cookies.get("authToken");
 
   const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
+    const { name, value, type, files } = e.target;
 
     setFormData((prevData) => ({
       ...prevData,
-      [name]:
-        type === "checkbox" ? checked : type === "file" ? files[0] : value,
+      [name]: type === "file" ? files[0] : value,
     }));
   };
 
@@ -59,9 +51,6 @@ const AddProduct = ({ onProductAdded }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      const responseToken = response.headers.get("Authorization");
-      setRequestToken(responseToken);
 
       if (response.ok) {
         const responseData = await response.json();

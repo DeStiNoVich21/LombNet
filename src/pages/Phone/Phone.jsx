@@ -1,33 +1,34 @@
 import { useState, useEffect } from "react";
 import AddProduct from "../../components/AddProduct/AddProduct";
-import FilterComponent from "../../components/FilterComponent/FilterComponent"; // Импортируем компонент фильтра
+import FilterComponent from "../../components/FilterComponent/FilterComponent";
 import styles from "./Phone.module.css";
 import PropTypes from "prop-types";
+import Cookies from "js-cookie";
 import API_BASE_URL from "../../apiConfig";
-import REACT_APP_AUTH_TOKEN from "../../appToken";
 
 const Phone = ({ addedProductName }) => {
   const [allProducts, setAllProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]); // Создаем состояние для отфильтрованных товаров
-  const [productAdded, setProductAdded] = useState(false); // Добавлен ли товар
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [productAdded, setProductAdded] = useState(false);
 
   const handleProductAdded = (productName) => {
-    // Устанавливаем флаг добавления товара в true
     setProductAdded(true);
   };
 
   const fetchAllProducts = async () => {
     try {
+      const authToken = Cookies.get("authToken");
+
       const response = await fetch(`${API_BASE_URL}/api/Fuji/products`, {
         headers: {
-          Authorization: `Bearer ${REACT_APP_AUTH_TOKEN} `,
+          Authorization: `Bearer ${authToken}`,
         },
       });
 
       if (response.ok) {
         const data = await response.json();
         setAllProducts(data);
-        setFilteredProducts(data); // При загрузке устанавливаем отфильтрованные товары равными всем товарам
+        setFilteredProducts(data);
       } else {
         console.error("Failed to fetch products.");
       }
@@ -38,24 +39,20 @@ const Phone = ({ addedProductName }) => {
 
   useEffect(() => {
     fetchAllProducts();
-  }, [productAdded]); // Зависимость изменена на productAdded
+  }, [productAdded]);
 
   useEffect(() => {
-    // При добавлении товара сбрасываем флаг обратно в false
     if (productAdded) {
       setProductAdded(false);
     }
   }, [productAdded]);
 
   const handleFilterChange = (filterParams) => {
-    // Функция для обработки изменений в фильтрах
     if (filterParams.trim() === "") {
-      // Если параметры фильтрации отсутствуют, отображаем все продукты
       setFilteredProducts(allProducts);
       return;
     }
 
-    // Выполнить фильтрацию на основе параметров
     const filtered = allProducts.filter((product) => {
       const params = new URLSearchParams(filterParams);
 
@@ -84,8 +81,7 @@ const Phone = ({ addedProductName }) => {
       <div className={styles.filterSection}>
         <h2>Фильтры:</h2>
         <br />
-        <FilterComponent onFilterChange={handleFilterChange} />{" "}
-        {/* Передаем функцию обработки фильтра в компонент */}
+        <FilterComponent onFilterChange={handleFilterChange} />
       </div>
       <div className={styles.productsSection}>
         <h2>Товары:</h2>

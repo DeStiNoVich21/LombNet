@@ -22,7 +22,6 @@ const FilterComponent = ({ onFilterChange }) => {
 
   return (
     <div>
-      <h3>Фильтр:</h3>
       <div>
         <label>Бренд:</label>
         <input

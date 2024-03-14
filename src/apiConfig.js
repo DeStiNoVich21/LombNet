@@ -1,3 +1,3 @@
-const API_BASE_URL = "https://rxwpzfj1-7211.euw.devtunnels.ms";
+const API_BASE_URL = "https://localhost:7211";
 
 export default API_BASE_URL;

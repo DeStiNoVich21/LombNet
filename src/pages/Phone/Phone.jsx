@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import AddProduct from "../../components/AddProduct/AddProduct";
 import FilterComponent from "../../components/FilterComponent/FilterComponent";
 import styles from "./Phone.module.css";
 import PropTypes from "prop-types";
@@ -9,11 +8,6 @@ import API_BASE_URL from "../../apiConfig";
 const Phone = ({ addedProductName }) => {
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [productAdded, setProductAdded] = useState(false);
-
-  const handleProductAdded = (productName) => {
-    setProductAdded(true);
-  };
 
   const fetchAllProducts = async () => {
     try {
@@ -39,13 +33,7 @@ const Phone = ({ addedProductName }) => {
 
   useEffect(() => {
     fetchAllProducts();
-  }, [productAdded]);
-
-  useEffect(() => {
-    if (productAdded) {
-      setProductAdded(false);
-    }
-  }, [productAdded]);
+  }, []);
 
   const handleFilterChange = (filterParams) => {
     if (filterParams.trim() === "") {
@@ -105,12 +93,6 @@ const Phone = ({ addedProductName }) => {
             </div>
           ))}
         </div>
-        <AddProduct onProductAdded={handleProductAdded} />
-        {addedProductName && (
-          <div className={styles.addedProductMessage}>
-            <p>{`Добавлен товар: ${addedProductName}`}</p>
-          </div>
-        )}
       </div>
     </div>
   );

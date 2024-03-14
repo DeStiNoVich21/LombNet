@@ -1,18 +1,21 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
+import styles from "./FilterComponent.module.css"; // Импортируем стили
 
-const FilterComponent = ({ onFilterChange }) => {
-  const [brand, setBrand] = useState("");
+const FilterComponent = ({ onFilterChange, brands }) => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [selectedBrands, setSelectedBrands] = useState([]);
 
   const handleFilter = () => {
     let filterParams = "";
 
-    if (brand) {
-      filterParams += `brand=${brand}`;
+    // Фильтрация по брендам
+    if (selectedBrands.length > 0) {
+      filterParams += `brands=${selectedBrands.join(",")}`;
     }
 
+    // Фильтрация по цене
     if (minPrice && maxPrice) {
       filterParams += `&minPrice=${minPrice}&maxPrice=${maxPrice}`;
     }
@@ -20,39 +23,66 @@ const FilterComponent = ({ onFilterChange }) => {
     onFilterChange(filterParams);
   };
 
+  const handleBrandChange = (e) => {
+    const { value, checked } = e.target;
+
+    if (checked) {
+      setSelectedBrands((prevSelectedBrands) => [...prevSelectedBrands, value]);
+    } else {
+      setSelectedBrands((prevSelectedBrands) =>
+        prevSelectedBrands.filter((brand) => brand !== value)
+      );
+    }
+  };
+
   return (
-    <div>
+    <div className={styles.container}>
       <div>
-        <label>Бренд:</label>
+        <label>От:</label>
         <input
-          type="text"
-          value={brand}
-          onChange={(e) => setBrand(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Минимальная цена:</label>
-        <input
+          className={styles.priceInput}
           type="number"
           value={minPrice}
           onChange={(e) => setMinPrice(e.target.value)}
         />
       </div>
       <div>
-        <label>Максимальная цена:</label>
+        <label>До:</label>
         <input
+          className={styles.priceInput}
           type="number"
           value={maxPrice}
           onChange={(e) => setMaxPrice(e.target.value)}
         />
       </div>
-      <button onClick={handleFilter}>Применить фильтр</button>
+      <div>
+        <label>Бренды:</label>
+        {brands.map(
+          (brand, index) =>
+            brand && (
+              <div key={index}>
+                <input
+                  className={styles.brandCheckbox}
+                  type="checkbox"
+                  value={brand}
+                  checked={selectedBrands.includes(brand)}
+                  onChange={handleBrandChange}
+                />
+                <label>{brand}</label>
+              </div>
+            )
+        )}
+      </div>
+      <button className={styles.applyButton} onClick={handleFilter}>
+        Применить фильтр
+      </button>
     </div>
   );
 };
 
 FilterComponent.propTypes = {
   onFilterChange: PropTypes.func.isRequired,
+  brands: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default FilterComponent;

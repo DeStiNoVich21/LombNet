@@ -8,31 +8,35 @@ import API_BASE_URL from "../../apiConfig";
 const Phone = ({ addedProductName }) => {
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-
-  const fetchAllProducts = async () => {
-    try {
-      const authToken = Cookies.get("authToken");
-
-      const response = await fetch(`${API_BASE_URL}/api/Fuji/products`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setAllProducts(data);
-        setFilteredProducts(data);
-      } else {
-        console.error("Failed to fetch products.");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
+  const [brands, setBrands] = useState([]);
 
   useEffect(() => {
-    fetchAllProducts();
+    const fetchProducts = async () => {
+      try {
+        const authToken = Cookies.get("authToken");
+        const response = await fetch(`${API_BASE_URL}/api/Fuji/products`, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setAllProducts(data);
+          setFilteredProducts(data);
+          const uniqueBrands = [
+            ...new Set(data.map((product) => product.brand)),
+          ];
+          setBrands(uniqueBrands.filter(Boolean)); // Отфильтруем пустые значения
+        } else {
+          console.error("Failed to fetch products.");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   const handleFilterChange = (filterParams) => {
@@ -44,8 +48,8 @@ const Phone = ({ addedProductName }) => {
     const filtered = allProducts.filter((product) => {
       const params = new URLSearchParams(filterParams);
 
-      if (params.has("brand")) {
-        if (product.brand !== params.get("brand")) {
+      if (params.has("brands")) {
+        if (!params.get("brands").split(",").includes(product.brand)) {
           return false;
         }
       }
@@ -69,7 +73,7 @@ const Phone = ({ addedProductName }) => {
       <div className={styles.filterSection}>
         <h2>Фильтры:</h2>
         <br />
-        <FilterComponent onFilterChange={handleFilterChange} />
+        <FilterComponent onFilterChange={handleFilterChange} brands={brands} />
       </div>
       <div className={styles.productsSection}>
         <h2>Товары:</h2>

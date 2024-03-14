@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import FilterComponent from "../../components/FilterComponent/FilterComponent";
 import styles from "./Phone.module.css";
 import PropTypes from "prop-types";
@@ -6,6 +7,7 @@ import Cookies from "js-cookie";
 import API_BASE_URL from "../../apiConfig";
 
 const Phone = ({ addedProductName }) => {
+  const navigate = useNavigate();
   const [allProducts, setAllProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -68,6 +70,10 @@ const Phone = ({ addedProductName }) => {
     setFilteredProducts(filtered);
   };
 
+  const handleProductClick = (productId) => {
+    navigate(`/phone/${productId}`); // Перенаправляем на страницу с деталями продукта с передачей идентификатора продукта через URL
+  };
+
   return (
     <div className={styles.productPage}>
       <div className={styles.filterSection}>
@@ -79,7 +85,11 @@ const Phone = ({ addedProductName }) => {
         <h2>Товары:</h2>
         <div className={styles.product}>
           {filteredProducts.map((product) => (
-            <div key={product.id} className={styles.productItem}>
+            <div
+              key={product.id}
+              className={styles.productItem}
+              onClick={() => handleProductClick(product.id)}
+            >
               <div className={styles.productImage}>
                 {product.imageFileName && (
                   <img

@@ -21,6 +21,7 @@ h2 {
 }
 
 .product {
+  cursor: pointer;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   column-gap: 40px;

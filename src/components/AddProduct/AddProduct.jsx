@@ -53,10 +53,10 @@ const AddProduct = ({ onProductAdded }) => {
       });
 
       if (response.ok) {
-        const responseData = await response.json();
-        const addedProductName = responseData.name;
-        onProductAdded(addedProductName);
         console.log("Product added successfully!");
+
+        // Обновляем страницу
+        window.location.reload();
       } else if (response.status === 401) {
         console.error("Unauthorized. Check if the token is valid.");
       } else {

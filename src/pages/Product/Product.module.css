@@ -1,0 +1,63 @@
+.productPage {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+.filterSection {
+  flex: 0 0 30%;
+  max-width: 30%;
+}
+
+.productDetails {
+  flex: 0 0 65%;
+  max-width: 65%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 элемента в строке */
+  gap: 20px; /* Расстояние между элементами */
+}
+
+.productItem {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Выравниваем содержимое по центру */
+  height: 300px; /* Высота блока */
+  transition: all 0.3s ease; /* Плавный переход при изменении стилей */
+}
+
+.productItem:hover {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тень при наведении */
+  transform: translateY(-5px); /* Небольшое поднятие при наведении */
+}
+
+.productImage {
+  display: flex;
+  justify-content: center; /* Выравниваем изображение по центру */
+  align-items: center; /* Выравниваем изображение по центру */
+  max-height: 70%; /* Высота изображения */
+}
+
+.productImage img {
+  max-width: 100%;
+  max-height: 100%; /* Максимальная высота изображения */
+  border-radius: 5px;
+}
+
+.productText {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Выравниваем содержимое по центру */
+}
+
+.productItem h2 {
+  margin-bottom: 10px;
+  font-size: 1.5rem;
+}
+
+.productPrice {
+  font-size: 1.2rem;
+}

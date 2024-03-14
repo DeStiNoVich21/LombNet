@@ -77,12 +77,11 @@ const Phone = ({ addedProductName }) => {
   return (
     <div className={styles.productPage}>
       <div className={styles.filterSection}>
-        <h2>Фильтры:</h2>
+        <h2>Смартфоны: </h2>
         <br />
         <FilterComponent onFilterChange={handleFilterChange} brands={brands} />
       </div>
       <div className={styles.productsSection}>
-        <h2>Товары:</h2>
         <div className={styles.product}>
           {filteredProducts.map((product) => (
             <div

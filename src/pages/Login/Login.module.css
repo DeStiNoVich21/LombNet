@@ -28,7 +28,7 @@ form {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-label {
+.label {
   margin-bottom: 10px;
   display: flex;
   flex-direction: column;

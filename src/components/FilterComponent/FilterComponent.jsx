@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import styles from "./FilterComponent.module.css"; // Импортируем стили
 
@@ -37,38 +37,43 @@ const FilterComponent = ({ onFilterChange, brands }) => {
 
   return (
     <div className={styles.container}>
-      <div>
-        <label>От:</label>
-        <input
-          className={styles.priceInput}
-          type="number"
-          value={minPrice}
-          onChange={(e) => setMinPrice(e.target.value)}
-        />
+      <div className={styles.price}>
+        <h3>Цена, ₸</h3>
+        <div className={styles.priceItem}>
+          <input
+            className={styles.priceInput}
+            placeholder="От:"
+            type="number"
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
+          />
+        </div>
+        <div className={styles.priceItem}>
+          <input
+            className={styles.priceInput}
+            placeholder="До:"
+            type="number"
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
+          />
+        </div>
       </div>
       <div>
-        <label>До:</label>
-        <input
-          className={styles.priceInput}
-          type="number"
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Бренды:</label>
+        <h3>Бренд</h3>
         {brands.map(
           (brand, index) =>
             brand && (
-              <div key={index}>
+              <div key={index} className={styles.brand}>
                 <input
                   className={styles.brandCheckbox}
                   type="checkbox"
+                  id={`brand-${index}`}
+                  name={`brand-${index}`}
                   value={brand}
                   checked={selectedBrands.includes(brand)}
                   onChange={handleBrandChange}
                 />
-                <label>{brand}</label>
+                <label htmlFor={`brand-${index}`}>{brand}</label>
               </div>
             )
         )}

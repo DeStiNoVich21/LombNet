@@ -1,3 +1,4 @@
+import AddCategoryForm from "../../components/AddCategoryForm/AddCategoryForm";
 import AddProduct from "../../components/AddProduct/AddProduct";
 
 export default function Admin() {
@@ -8,6 +9,7 @@ export default function Admin() {
   return (
     <div>
       <h1>Администрирование</h1>
+      <AddCategoryForm />
       <AddProduct onProductAdded={handleProductAdded} />
     </div>
   );

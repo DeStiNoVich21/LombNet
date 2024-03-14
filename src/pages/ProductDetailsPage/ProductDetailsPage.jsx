@@ -1,54 +1,68 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import styles from "./ProductDetailsPage.module.css";
+import PropTypes from "prop-types";
 import API_BASE_URL from "../../apiConfig";
+import Cookies from "js-cookie";
 
 const ProductDetailsPage = () => {
-  const { id, imageFileName } = useParams();
+  const { id } = useParams();
   const [product, setProduct] = useState(null);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/Fuji/product/${id}`);
+        const authToken = Cookies.get("authToken");
+        const response = await fetch(
+          `${API_BASE_URL}/api/Fuji/products/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authToken}`,
+            },
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
           setProduct(data);
-          setError(null); // Сбрасываем ошибку, если запрос успешный
         } else {
-          setError("Failed to fetch product details.");
+          console.error("Failed to fetch product details.");
         }
       } catch (error) {
         console.error("Error:", error);
-        setError(error.message); // Устанавливаем текст ошибки
       }
     };
 
     fetchProductDetails();
   }, [id]);
 
-  if (error) {
-    return <div>Error: {error}</div>; // Отображаем сообщение об ошибке
-  }
-
   if (!product) {
-    return <div>Loading...</div>;
+    return <div>Loading...</div>; // Выводим загрузочное сообщение пока продукт загружается
   }
 
   return (
-    <div>
+    <div className={styles.productDetails}>
       <h2>{product.name}</h2>
-      <p>Цена: {product.price}</p>
-      <p>Описание: {product.description}</p>
-      {imageFileName && (
-        <img
-          src={`${API_BASE_URL}/api/Fuji/getImage/${imageFileName}`}
-          alt={product.name}
-        />
-      )}
+      <div className={styles.productImage}>
+        {product.imageFileName && (
+          <img
+            src={`${API_BASE_URL}/api/Fuji/getImage/${product.imageFileName}`}
+            alt={product.name}
+          />
+        )}
+      </div>
+      <div className={styles.productInfo}>
+        <p>Category: {product.category}</p>
+        <p>Price: {product.price}</p>
+        <p>Description: {product.description}</p>
+        {/* Другие детали продукта */}
+      </div>
     </div>
   );
+};
+
+ProductDetailsPage.propTypes = {
+  id: PropTypes.string.isRequired,
 };
 
 export default ProductDetailsPage;

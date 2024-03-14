@@ -63,7 +63,7 @@ const Login = () => {
       <div className={styles.content}>
         <h1>Войти</h1>
         <form className={styles.form}>
-          <label>
+          <label className={styles.label}>
             Имя:
             <input
               type="text"
@@ -74,7 +74,7 @@ const Login = () => {
             />
           </label>
           <br />
-          <label>
+          <label className={styles.label}>
             Пароль:
             <input
               type="password"

@@ -1,23 +1,24 @@
 .productPage {
   margin: 0;
   display: flex;
-  color: #22335f;
   height: 100%;
 }
 
 h2 {
   margin: 0;
+  font-weight: 700;
+  font-size: 32px;
 }
 
 .filterSection {
   width: 20%;
-  border-right: 3px solid #22335f;
   padding: 40px;
 }
 
 .productsSection {
   width: 80%;
-  padding: 40px;
+  padding-inline: 40px;
+  padding-top: 20px;
 }
 
 .product {

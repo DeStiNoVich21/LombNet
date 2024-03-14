@@ -13,7 +13,7 @@ const Header = () => {
     <>
       <header className={styles.header}>
         <Link to="/" className={styles.logo}>
-          <img src="logo.svg" alt="" />
+          <img src="logo.svg" alt="" className={styles.logoImage} />
           <div>LombNet</div>
         </Link>
         <Link to="/admin">

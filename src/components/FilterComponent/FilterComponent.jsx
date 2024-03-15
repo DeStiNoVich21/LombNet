@@ -11,7 +11,7 @@ const FilterComponent = ({ onFilterChange, brands }) => {
     let filterParams = {};
 
     if (selectedBrands.length > 0) {
-      filterParams["brand"] = selectedBrands.join("&brand=");
+      filterParams["brand"] = selectedBrands.join(",");
     }
 
     if (minPrice && maxPrice) {
@@ -19,7 +19,11 @@ const FilterComponent = ({ onFilterChange, brands }) => {
       filterParams["maxPrice"] = parseInt(maxPrice);
     }
 
-    onFilterChange(filterParams);
+    const queryParams = new URLSearchParams(filterParams).toString();
+
+    console.log("Filter Params:", filterParams); // Добавленный console.log
+
+    onFilterChange(queryParams);
   };
 
   const handleBrandChange = (e) => {
@@ -60,18 +64,20 @@ const FilterComponent = ({ onFilterChange, brands }) => {
       </div>
       <div>
         <h3>Бренд</h3>
-        {brands.map((brand, index) => (
-          <div key={index} className={styles.checkboxContainer}>
-            <input
-              type="checkbox"
-              id={brand}
-              value={brand}
-              checked={selectedBrands.includes(brand)}
-              onChange={handleBrandChange}
-            />
-            <label htmlFor={brand}>{brand}</label>
-          </div>
-        ))}
+        {brands
+          .filter((brand) => brand)
+          .map((brand, index) => (
+            <div key={index} className={styles.checkboxContainer}>
+              <input
+                type="checkbox"
+                id={brand}
+                value={brand}
+                checked={selectedBrands.includes(brand)}
+                onChange={handleBrandChange}
+              />
+              <label htmlFor={brand}>{brand}</label>
+            </div>
+          ))}
       </div>
       <button className={styles.applyButton} onClick={handleFilter}>
         Применить фильтр

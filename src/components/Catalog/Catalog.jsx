@@ -18,7 +18,7 @@ export default function Catalog() {
         console.error("Error fetching categories:", error);
         setLoading(false);
       });
-  }, []);
+  }, []); // Пустой массив зависимостей означает, что useEffect выполняется только после монтирования компонента
 
   return (
     <div className={styles.catalogContainer}>

@@ -1,18 +1,22 @@
 .productPage {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   padding: 20px;
 }
 
 .filterSection {
-  flex: 0 0 30%;
-  max-width: 30%;
+  flex: 0 0 calc(20% - 25px); /* Изменили ширину и добавили отступ */
+  max-width: calc(
+    20% - 25px
+  ); /* Изменили максимальную ширину и добавили отступ */
+  margin-right: 40px; /* Добавили отступ между разделами */
 }
 
 .productDetails {
-  flex: 0 0 65%;
-  max-width: 65%;
+  flex: 0 0 calc(80% - 25px); /* Изменили ширину и добавили отступ */
+  max-width: calc(
+    80% - 25px
+  ); /* Изменили максимальную ширину и добавили отступ */
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* 3 элемента в строке */
   gap: 20px; /* Расстояние между элементами */

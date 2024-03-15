@@ -6,27 +6,37 @@ import API_BASE_URL from "../../apiConfig";
 import FilterComponent from "../../components/FilterComponent/FilterComponent";
 
 const Product = () => {
-  const { category } = useParams(); // Получаем параметр category из URL
+  const { category } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({});
+  const [brands, setBrands] = useState([]);
 
   useEffect(() => {
     const fetchProductDetails = async () => {
       try {
         const authToken = Cookies.get("authToken");
-        const response = await fetch(
-          `${API_BASE_URL}/api/Fuji/products/category/${category}`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
+        let url = `${API_BASE_URL}/api/Fuji/products/category/${category}`;
+
+        const response = await fetch(url, {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
 
         if (response.ok) {
           const data = await response.json();
-          console.log("Received product data:", data);
-          setProduct(data);
+
+          // Фильтрация продуктов по isDeleted: false
+          const filteredProducts = data.filter((item) => !item.isDeleted);
+
+          setProduct(filteredProducts);
+
+          // Получение списка уникальных брендов из полученных продуктов
+          const uniqueBrands = [
+            ...new Set(filteredProducts.map((item) => item.brand)),
+          ];
+          setBrands(uniqueBrands);
         } else {
           console.error("Failed to fetch product details:", response.status);
         }
@@ -37,21 +47,19 @@ const Product = () => {
       }
     };
 
-    // Проверяем, что category не undefined перед тем как выполнять запрос
     if (category !== undefined) {
-      console.log("Category:", category); // Добавлен console.log для категории
       fetchProductDetails();
     }
   }, [category]);
 
-  console.log("Loading:", loading); // Добавлен console.log для загрузки
-  console.log("Product:", product);
+  const handleFilterChange = (filterParams) => {
+    setFilters(filterParams);
+  };
 
-  // Отображаем информацию о продукте
   return (
     <div className={styles.productPage}>
       <div className={styles.filterSection}>
-        <FilterComponent onFilterChange={() => {}} brands={[]} />
+        <FilterComponent onFilterChange={handleFilterChange} brands={brands} />
       </div>
       <div className={styles.productDetails}>
         {product &&

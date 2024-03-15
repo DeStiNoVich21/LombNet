@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
-import styles from "./FilterComponent.module.css"; // Импортируем стили
+import styles from "./FilterComponent.module.css";
 
 const FilterComponent = ({ onFilterChange, brands }) => {
   const [minPrice, setMinPrice] = useState("");
@@ -8,29 +8,29 @@ const FilterComponent = ({ onFilterChange, brands }) => {
   const [selectedBrands, setSelectedBrands] = useState([]);
 
   const handleFilter = () => {
-    let filterParams = "";
+    let filterParams = {};
 
-    // Фильтрация по брендам
     if (selectedBrands.length > 0) {
-      filterParams += `brands=${selectedBrands.join(",")}`;
+      filterParams["brand"] = selectedBrands.join("&brand=");
     }
 
-    // Фильтрация по цене
     if (minPrice && maxPrice) {
-      filterParams += `&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+      filterParams["minPrice"] = parseInt(minPrice);
+      filterParams["maxPrice"] = parseInt(maxPrice);
     }
 
     onFilterChange(filterParams);
   };
 
   const handleBrandChange = (e) => {
-    const { value, checked } = e.target;
+    const brand = e.target.value;
+    const isChecked = e.target.checked;
 
-    if (checked) {
-      setSelectedBrands((prevSelectedBrands) => [...prevSelectedBrands, value]);
+    if (isChecked) {
+      setSelectedBrands([...selectedBrands, brand]);
     } else {
-      setSelectedBrands((prevSelectedBrands) =>
-        prevSelectedBrands.filter((brand) => brand !== value)
+      setSelectedBrands(
+        selectedBrands.filter((selectedBrand) => selectedBrand !== brand)
       );
     }
   };
@@ -60,23 +60,18 @@ const FilterComponent = ({ onFilterChange, brands }) => {
       </div>
       <div>
         <h3>Бренд</h3>
-        {brands.map(
-          (brand, index) =>
-            brand && (
-              <div key={index} className={styles.brand}>
-                <input
-                  className={styles.brandCheckbox}
-                  type="checkbox"
-                  id={`brand-${index}`}
-                  name={`brand-${index}`}
-                  value={brand}
-                  checked={selectedBrands.includes(brand)}
-                  onChange={handleBrandChange}
-                />
-                <label htmlFor={`brand-${index}`}>{brand}</label>
-              </div>
-            )
-        )}
+        {brands.map((brand, index) => (
+          <div key={index} className={styles.checkboxContainer}>
+            <input
+              type="checkbox"
+              id={brand}
+              value={brand}
+              checked={selectedBrands.includes(brand)}
+              onChange={handleBrandChange}
+            />
+            <label htmlFor={brand}>{brand}</label>
+          </div>
+        ))}
       </div>
       <button className={styles.applyButton} onClick={handleFilter}>
         Применить фильтр

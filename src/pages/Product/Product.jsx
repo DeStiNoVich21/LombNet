@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import styles from "./Product.module.css";
 import Cookies from "js-cookie";
 import API_BASE_URL from "../../apiConfig";
@@ -18,6 +18,12 @@ const Product = () => {
         const authToken = Cookies.get("authToken");
         let url = `${API_BASE_URL}/api/Fuji/products/category/${category}`;
 
+        const filterParams = new URLSearchParams(filters).toString();
+
+        if (filterParams) {
+          url = `${API_BASE_URL}/api/Fuji/products/filter?${filterParams}`;
+        }
+
         const response = await fetch(url, {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -27,12 +33,9 @@ const Product = () => {
         if (response.ok) {
           const data = await response.json();
 
-          // Фильтрация продуктов по isDeleted: false
           const filteredProducts = data.filter((item) => !item.isDeleted);
-
           setProduct(filteredProducts);
 
-          // Получение списка уникальных брендов из полученных продуктов
           const uniqueBrands = [
             ...new Set(filteredProducts.map((item) => item.brand)),
           ];
@@ -50,7 +53,7 @@ const Product = () => {
     if (category !== undefined) {
       fetchProductDetails();
     }
-  }, [category]);
+  }, [category, filters]);
 
   const handleFilterChange = (filterParams) => {
     setFilters(filterParams);
@@ -64,20 +67,26 @@ const Product = () => {
       <div className={styles.productDetails}>
         {product &&
           product.map((item, index) => (
-            <div key={index} className={styles.productItem}>
-              <div className={styles.productImage}>
-                {item.imageFileName && (
-                  <img
-                    src={`${API_BASE_URL}/api/Fuji/getImage/${item.imageFileName}`}
-                    alt={item.name}
-                  />
-                )}
+            <Link
+              key={index}
+              to={`/product/${item.id}`}
+              style={{ textDecoration: "none", color: "black" }} // Инлайновые стили для Link
+            >
+              <div className={styles.productItem}>
+                <div className={styles.productImage}>
+                  {item.imageFileName && (
+                    <img
+                      src={`${API_BASE_URL}/api/Fuji/getImage/${item.imageFileName}`}
+                      alt={item.name}
+                    />
+                  )}
+                </div>
+                <div className={styles.productText}>
+                  <h2>{item.name}</h2>
+                  <p className={styles.productPrice}>Цена: {item.price}</p>
+                </div>
               </div>
-              <div className={styles.productText}>
-                <h2>{item.name}</h2>
-                <p className={styles.productPrice}>Цена: {item.price}</p>
-              </div>
-            </div>
+            </Link>
           ))}
       </div>
     </div>

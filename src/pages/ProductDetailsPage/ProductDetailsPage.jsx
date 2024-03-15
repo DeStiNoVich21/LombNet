@@ -13,14 +13,12 @@ const ProductDetailsPage = () => {
     const fetchProductDetails = async () => {
       try {
         const authToken = Cookies.get("authToken");
-        const response = await fetch(
-          `${API_BASE_URL}/api/Fuji/products/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${authToken}`,
-            },
-          }
-        );
+        const response = await fetch(`${API_BASE_URL}/api/Fuji/product/${id}`, {
+          // Изменено правильный URL
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        });
 
         if (response.ok) {
           const data = await response.json();
@@ -62,7 +60,7 @@ const ProductDetailsPage = () => {
 };
 
 ProductDetailsPage.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.string,
 };
 
 export default ProductDetailsPage;

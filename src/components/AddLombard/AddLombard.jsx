@@ -50,45 +50,80 @@ const AddLombardForm = ({ onLombardAdded }) => {
   };
 
   return (
-    <div>
-      <h2>Add Lombard</h2>
-      <form>
-        <label>
-          Name:
-          <input
-            type="text"
-            name="name"
-            value={lombardData.name}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
-        <label>
-          Address:
-          <input
-            type="text"
-            name="address"
-            value={lombardData.address}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
-        <label>
-          Number:
-          <input
-            type="text"
-            name="number"
-            value={lombardData.number}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
-        <button type="button" onClick={handleAddLombard}>
-          Add Lombard
-        </button>
-      </form>
-    </div>
+    <form style={styles.form}>
+      <h2 style={styles.heading}>Добавить ломбард</h2>
+      <label style={styles.label}>
+        Название:
+        <input
+          type="text"
+          name="name"
+          value={lombardData.name}
+          onChange={handleInputChange}
+          style={styles.input}
+        />
+      </label>
+      <br />
+      <label style={styles.label}>
+        Адрес:
+        <input
+          type="text"
+          name="address"
+          value={lombardData.address}
+          onChange={handleInputChange}
+          style={styles.input}
+        />
+      </label>
+      <br />
+      <label style={styles.label}>
+        Номер:
+        <input
+          type="text"
+          name="number"
+          value={lombardData.number}
+          onChange={handleInputChange}
+          style={styles.input}
+        />
+      </label>
+      <br />
+      <button type="button" onClick={handleAddLombard} style={styles.button}>
+        Добавить ломбард
+      </button>
+    </form>
   );
+};
+
+const styles = {
+  form: {
+    maxWidth: "400px",
+    margin: "0 auto",
+  },
+  heading: {
+    fontSize: "24px",
+    marginBottom: "20px",
+  },
+  label: {
+    display: "block",
+    marginBottom: "10px",
+  },
+  input: {
+    width: "100%",
+    padding: "8px",
+    fontSize: "16px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    boxSizing: "border-box",
+    marginBottom: "10px",
+  },
+  button: {
+    backgroundColor: "#007bff",
+    color: "#fff",
+    border: "none",
+    padding: "10px 20px",
+    fontSize: "16px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+  },
 };
 
 export default AddLombardForm;

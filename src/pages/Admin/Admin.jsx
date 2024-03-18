@@ -2,6 +2,7 @@ import { useState } from "react";
 import AddCategoryForm from "../../components/AddCategoryForm/AddCategoryForm";
 import AddProduct from "../../components/AddProduct/AddProduct";
 import AddLombardForm from "../../components/AddLombard/AddLombard";
+import styles from "../Admin/Admin.module.css";
 
 export default function Admin() {
   const handleCategoryAdded = () => {
@@ -20,11 +21,13 @@ export default function Admin() {
   };
 
   return (
-    <div>
-      <h1>Администрирование</h1>
-      <AddCategoryForm onCategoryAdded={handleCategoryAdded} />
-      <AddProduct onProductAdded={handleProductAdded} />
-      <AddLombardForm onLombardAdded={handleLombardAdded} />
+    <div className={styles.container}>
+      <h1 className={styles.heading}>Администрирование</h1>
+      <div className={styles.addForm}>
+        <AddCategoryForm onCategoryAdded={handleCategoryAdded} />
+        <AddProduct onProductAdded={handleProductAdded} />
+        <AddLombardForm onLombardAdded={handleLombardAdded} />
+      </div>
     </div>
   );
 }

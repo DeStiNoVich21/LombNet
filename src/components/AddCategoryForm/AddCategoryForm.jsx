@@ -61,37 +61,85 @@ const AddCategoryForm = ({ onCategoryAdded }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      {errorMessage && <p>{errorMessage}</p>}
-      <label>
-        Name:
-        <input type="text" value={name} onChange={handleNameChange} required />
+    <form style={styles.form} onSubmit={handleSubmit}>
+      {errorMessage && <p style={styles.error}>{errorMessage}</p>}
+      <h2 style={styles.heading}>Добавление категории</h2>
+      <label style={styles.label}>
+        Название:
+        <input
+          type="text"
+          value={name}
+          onChange={handleNameChange}
+          style={styles.input}
+          required
+        />
       </label>
-      <label>
-        Category:
+      <label style={styles.label}>
+        Категория:
         <input
           type="text"
           value={category}
           onChange={handleCategoryChange}
+          style={styles.input}
           required
         />
       </label>
-      <label>
-        Image:
+      <label style={styles.label}>
+        Картинка:
         <input
           type="file"
           accept="image/*"
           onChange={handleImageChange}
+          style={styles.input}
           required
         />
       </label>
-      <button type="submit">Добавить категорию</button>
+      <button type="submit" style={styles.button}>
+        Добавить категорию
+      </button>
     </form>
   );
 };
 
 AddCategoryForm.propTypes = {
   onCategoryAdded: PropTypes.func.isRequired,
+};
+
+const styles = {
+  form: {
+    maxWidth: "400px",
+    margin: "0 auto",
+  },
+  heading: {
+    fontSize: "24px",
+    marginBottom: "20px",
+  },
+  label: {
+    display: "block",
+    marginBottom: "10px",
+  },
+  input: {
+    width: "100%",
+    padding: "8px",
+    fontSize: "16px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    boxSizing: "border-box",
+    marginBottom: "10px",
+  },
+  button: {
+    backgroundColor: "#007bff",
+    color: "#fff",
+    border: "none",
+    padding: "10px 20px",
+    fontSize: "16px",
+    borderRadius: "4px",
+    cursor: "pointer",
+  },
+  error: {
+    color: "#dc3545",
+    marginBottom: "10px",
+  },
 };
 
 export default AddCategoryForm;

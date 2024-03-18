@@ -36,3 +36,19 @@
   border: 2px solid #22335f;
   color: #fff;
 }
+
+.logout {
+  font-family: "Roboto", sans-serif;
+  border: 2px solid #3e4a7a;
+  color: #3e4a7a;
+  background-color: #fff;
+  border-radius: 10px;
+  width: 120px;
+  height: 40px;
+}
+
+.logout:hover {
+  background-color: #22335f;
+  border: 2px solid #22335f;
+  color: #fff;
+}

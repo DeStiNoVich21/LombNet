@@ -14,7 +14,6 @@ const ProductDetailsPage = () => {
       try {
         const authToken = Cookies.get("authToken");
         const response = await fetch(`${API_BASE_URL}/api/Fuji/product/${id}`, {
-          // Изменено правильный URL
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
@@ -40,7 +39,6 @@ const ProductDetailsPage = () => {
 
   return (
     <div className={styles.productDetails}>
-      <h2>{product.name}</h2>
       <div className={styles.productImage}>
         {product.imageFileName && (
           <img
@@ -50,10 +48,11 @@ const ProductDetailsPage = () => {
         )}
       </div>
       <div className={styles.productInfo}>
+        <h2>{product.name}</h2>
         <p>Category: {product.category}</p>
         <p>Price: {product.price}</p>
         <p>Description: {product.description}</p>
-        {/* Другие детали продукта */}
+        <button className={styles.buyButton}>Купить</button>
       </div>
     </div>
   );

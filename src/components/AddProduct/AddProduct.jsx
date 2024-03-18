@@ -69,23 +69,26 @@ const AddProduct = ({ onProductAdded }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Name:
+    <form style={styles.form} onSubmit={handleSubmit}>
+      <h2>Добавление товара</h2>
+      <label style={styles.label}>
+        Название:
         <input
           type="text"
           name="name"
           value={formData.name}
           onChange={handleChange}
+          style={styles.input}
         />
       </label>
-      <label>
-        Category:
+      <label style={styles.label}>
+        Категория:
         <select
           name="category"
           value={formData.category}
           onChange={handleChange}
-          className={categoryError ? "error" : ""}
+          className={categoryError ? styles.selectError : ""}
+          style={styles.input}
         >
           <option value="" disabled>
             Выберите категорию
@@ -97,12 +100,17 @@ const AddProduct = ({ onProductAdded }) => {
           ))}
         </select>
         {categoryError && (
-          <p className="error">Пожалуйста, выберите категорию.</p>
+          <p style={styles.error}>Пожалуйста, выберите категорию.</p>
         )}
       </label>
-      <label>
-        Brand:
-        <select name="brand" value={formData.brand} onChange={handleChange}>
+      <label style={styles.label}>
+        Бренд:
+        <select
+          name="brand"
+          value={formData.brand}
+          onChange={handleChange}
+          style={styles.input}
+        >
           <option value="" disabled>
             Выберите бренд
           </option>
@@ -113,34 +121,105 @@ const AddProduct = ({ onProductAdded }) => {
           ))}
         </select>
       </label>
-      <label>
-        Description:
+      <label style={styles.label}>
+        Описание:
         <textarea
           name="description"
           value={formData.description}
           onChange={handleChange}
+          style={styles.input}
         />
       </label>
-      <label>
-        Price:
+      <label style={styles.label}>
+        Цена:
         <input
           type="number"
           name="price"
           value={formData.price}
           onChange={handleChange}
+          style={styles.input}
         />
       </label>
-      <label>
-        Image:
-        <input type="file" name="image" onChange={handleChange} />
+      <label style={styles.label}>
+        Картинка:
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleChange}
+          style={styles.input}
+          required
+        />
       </label>
-      <button type="submit">Добавить товар</button>
+      <button type="submit" style={styles.button}>
+        Добавить товар
+      </button>
     </form>
   );
 };
 
 AddProduct.propTypes = {
   onProductAdded: PropTypes.func.isRequired,
+};
+
+const styles = {
+  form: {
+    maxWidth: "400px",
+    margin: "0 auto",
+  },
+  label: {
+    display: "block",
+    marginBottom: "10px",
+  },
+  input: {
+    width: "100%",
+    padding: "8px",
+    fontSize: "16px",
+    border: "1px solid #ccc",
+    borderRadius: "4px",
+    boxSizing: "border-box",
+    marginBottom: "10px",
+  },
+  selectError: {
+    borderColor: "#dc3545",
+  },
+  button: {
+    backgroundColor: "#007bff",
+    color: "#fff",
+    border: "none",
+    padding: "10px 20px",
+    fontSize: "16px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+    marginRight: "10px", // Добавим небольшое отступание справа
+  },
+  buttonHover: {
+    backgroundColor: "#0056b3",
+  },
+  error: {
+    color: "#dc3545",
+    marginBottom: "10px",
+  },
+  fileInputContainer: {
+    position: "relative",
+    display: "inline-block",
+    width: "32px",
+    height: "32px",
+    backgroundColor: "#007bff",
+    color: "#fff",
+    borderRadius: "4px",
+    lineHeight: "32px",
+    textAlign: "center",
+    cursor: "pointer",
+  },
+  fileInputLabel: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    cursor: "pointer",
+  },
 };
 
 export default AddProduct;

@@ -1,20 +1,52 @@
-.overlay {
+/* Modal container */
+.modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.5); /* Затемненный фон */
   display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
 }
 
-.modal {
-  background: white;
+/* Modal content */
+.modalСontent {
+  background-color: #fff; /* Цвет фона модального окна */
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin-top: 20px;
-  margin-right: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Тень */
+  max-width: 400px;
+  width: 90%;
+  position: relative; /* Добавляем для корректного позиционирования кнопки закрытия */
+}
+
+/* Modal content container */
+.modalContentContainer div {
+  display: flex;
+  flex-direction: column; /* Располагаем элементы в колонку */
+}
+
+/* Close button */
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  color: #666; /* Цвет иконки закрытия */
+}
+
+/* Additional styles for the links within the modal */
+.modalContent a {
+  display: block;
+  margin-bottom: 10px;
+  color: #007bff; /* Цвет ссылок */
+  text-decoration: none;
+}
+
+/* Additional styles for the links within the modal on hover */
+.modalContent a:hover {
+  text-decoration: underline;
 }

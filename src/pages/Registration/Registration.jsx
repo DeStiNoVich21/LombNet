@@ -14,6 +14,7 @@ const Registration = () => {
   });
 
   const [modalContent, setModalContent] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Состояние для отслеживания открытия модального окна
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -36,6 +37,7 @@ const Registration = () => {
         body: "Все поля должны быть заполнены.",
         type: "error",
       });
+      setIsModalOpen(true); // Открыть модальное окно при ошибке
       return;
     }
 
@@ -50,6 +52,7 @@ const Registration = () => {
         body: `Пользователь ${userData.username} успешно зарегистрирован.`,
         type: "success",
       });
+      setIsModalOpen(true); // Открыть модальное окно при успешной регистрации
     } catch (error) {
       setModalContent({
         title: "Ошибка регистрации",
@@ -58,11 +61,15 @@ const Registration = () => {
           : "Произошла ошибка во время регистрации.",
         type: "error",
       });
+      setIsModalOpen(true); // Открыть модальное окно при ошибке регистрации
     }
   };
 
-  const closeModal = () => {
-    setModalContent(null);
+  const handleCloseModal = () => {
+    if (!modalContent) {
+      setIsModalOpen(false); // Закрыть модальное окно, если нет содержимого для отображения
+      console.log("gsfee");
+    }
   };
 
   return (
@@ -121,13 +128,10 @@ const Registration = () => {
         <p>
           Уже есть аккаунт? <Link to="/login">Войти</Link>.
         </p>
-        {modalContent && (
-          <Modal onClose={closeModal} className={styles.modal}>
+        {modalContent && ( // Показывать модальное окно, если есть контент для отображения
+          <Modal onClose={handleCloseModal}>
             <div className={styles.modal_item}>
               <h2>{modalContent.title}</h2>
-              <button onClick={closeModal} className={styles.closeButton}>
-                X
-              </button>
             </div>
             <p>{modalContent.body}</p>
           </Modal>

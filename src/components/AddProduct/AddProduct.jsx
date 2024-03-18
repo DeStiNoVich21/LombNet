@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 import PropTypes from "prop-types";
 import API_BASE_URL from "../../apiConfig";
 import Cookies from "js-cookie";
@@ -9,24 +10,26 @@ const AddProduct = ({ onProductAdded }) => {
     category: "",
     description: "",
     price: 0,
+    status: "In_stock",
     brand: "",
-    image: null,
   });
 
-  const categories = ["telephone", "laptop", "tablet", "headphones"];
-  const brands = ["Iphone", "Samsung", "Xiaomi", "OPPO", "Nokia"];
-
+  const [image, setImage] = useState(null); // Отдельный стейт для изображения
   const [categoryError, setCategoryError] = useState(false);
-
-  const token = Cookies.get("authToken");
+  const [imageError, setImageError] = useState(false);
+  const [token] = useState(Cookies.get("authToken"));
 
   const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+    const { name, value } = e.target;
 
     setFormData((prevData) => ({
       ...prevData,
-      [name]: type === "file" ? files[0] : value,
+      [name]: value,
     }));
+  };
+
+  const handleImageChange = (e) => {
+    setImage(e.target.files[0]); // Обновляем состояние изображения при его изменении
   };
 
   const handleSubmit = async (e) => {
@@ -37,6 +40,11 @@ const AddProduct = ({ onProductAdded }) => {
       return;
     }
 
+    if (!image) {
+      setImageError(true);
+      return;
+    }
+
     try {
       const formDataToSend = new FormData();
 
@@ -44,18 +52,21 @@ const AddProduct = ({ onProductAdded }) => {
         formDataToSend.append(key, formData[key]);
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/Fuji/addProduct`, {
-        method: "POST",
-        body: formDataToSend,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      formDataToSend.append("image", image); // Добавляем изображение к данным для отправки
 
-      if (response.ok) {
+      const response = await axios.post(
+        `${API_BASE_URL}/api/Fuji/addProduct`,
+        formDataToSend,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
         console.log("Product added successfully!");
-
-        // Обновляем страницу
+        onProductAdded(formData.name);
         window.location.reload();
       } else if (response.status === 401) {
         console.error("Unauthorized. Check if the token is valid.");
@@ -83,43 +94,27 @@ const AddProduct = ({ onProductAdded }) => {
       </label>
       <label style={styles.label}>
         Категория:
-        <select
+        <input
+          type="text"
           name="category"
           value={formData.category}
           onChange={handleChange}
           className={categoryError ? styles.selectError : ""}
           style={styles.input}
-        >
-          <option value="" disabled>
-            Выберите категорию
-          </option>
-          {categories.map((category, index) => (
-            <option key={index} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
+        />
         {categoryError && (
           <p style={styles.error}>Пожалуйста, выберите категорию.</p>
         )}
       </label>
       <label style={styles.label}>
         Бренд:
-        <select
+        <input
+          type="text"
           name="brand"
           value={formData.brand}
           onChange={handleChange}
           style={styles.input}
-        >
-          <option value="" disabled>
-            Выберите бренд
-          </option>
-          {brands.map((brand, index) => (
-            <option key={index} value={brand}>
-              {brand}
-            </option>
-          ))}
-        </select>
+        />
       </label>
       <label style={styles.label}>
         Описание:
@@ -145,10 +140,13 @@ const AddProduct = ({ onProductAdded }) => {
         <input
           type="file"
           accept="image/*"
-          onChange={handleChange}
+          onChange={handleImageChange}
           style={styles.input}
           required
         />
+        {imageError && (
+          <p style={styles.error}>Пожалуйста, выберите изображение.</p>
+        )}
       </label>
       <button type="submit" style={styles.button}>
         Добавить товар
@@ -191,34 +189,11 @@ const styles = {
     borderRadius: "4px",
     cursor: "pointer",
     transition: "background-color 0.3s ease",
-    marginRight: "10px", // Добавим небольшое отступание справа
-  },
-  buttonHover: {
-    backgroundColor: "#0056b3",
+    marginRight: "10px",
   },
   error: {
     color: "#dc3545",
     marginBottom: "10px",
-  },
-  fileInputContainer: {
-    position: "relative",
-    display: "inline-block",
-    width: "32px",
-    height: "32px",
-    backgroundColor: "#007bff",
-    color: "#fff",
-    borderRadius: "4px",
-    lineHeight: "32px",
-    textAlign: "center",
-    cursor: "pointer",
-  },
-  fileInputLabel: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    cursor: "pointer",
   },
 };
 

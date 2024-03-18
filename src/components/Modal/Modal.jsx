@@ -3,9 +3,12 @@ import styles from "./Modal.module.css";
 
 const Modal = ({ onClose, children }) => {
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        {children}
+    <div className={styles.modal} onClick={onClose}>
+      <div className={styles.modalСontent} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalContentContainer}>{children}</div>
+        <span className={styles.closeButton} onClick={onClose}>
+          ×
+        </span>
       </div>
     </div>
   );

@@ -1,32 +1,31 @@
-import { jwtDecode, InvalidTokenError } from "jwt-decode"; // Импортируем необходимые функции для декодирования JWT токена
+import { jwtDecode } from "jwt-decode";
+import { useState } from "react";
 import styles from "../Header/Header.module.css";
 import { Link } from "react-router-dom";
 import { useUser } from "../UserContext";
+import Modal from "../Modal/Modal"; // Путь к компоненту модального окна
 
 const Header = () => {
   const { user, logoutUser } = useUser();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleLogout = () => {
-    logoutUser();
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   let isAdmin = false;
 
-  // Проверяем, залогинен ли пользователь и содержит ли его токен информацию о роли
   if (user && user.encodedJwt) {
     try {
-      // Декодируем JWT токен
       const decodedToken = jwtDecode(user.encodedJwt);
-
-      // Выводим содержимое декодированного токена в консоль
-      console.log("Decoded JWT Token:", decodedToken);
-
-      // Проверяем роль пользователя
       isAdmin =
         decodedToken[
           "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
         ] === "Moderator";
-      console.log(decodedToken.role);
     } catch (error) {
       console.error("Ошибка декодирования токена:", error);
     }
@@ -46,16 +45,16 @@ const Header = () => {
             columnGap: "20px",
           }}
         >
-          {isAdmin && ( // Показываем ссылку на админ-панель только для модераторов
+          {isAdmin && (
             <Link to="/admin" className={styles.adminLink}>
-              <div>Понель администратора</div>
+              <div>Панель администратора</div>
             </Link>
           )}
           {user ? (
             <>
               <span>{user.username}</span>
               <button onClick={handleLogout} className={styles.logout}>
-                Выйти
+                Мой кабинет
               </button>
             </>
           ) : (
@@ -65,6 +64,23 @@ const Header = () => {
           )}
         </div>
       </header>
+      {isModalOpen && (
+        <Modal onClose={handleCloseModal}>
+          <div>
+            {/* Добавляем ссылку на страницу истории покупок */}
+            <Link to="/purchase-history">Мои покупки</Link>
+            {/* Добавляем функцию закрытия модального окна при нажатии на кнопку */}
+            <button
+              onClick={() => {
+                logoutUser();
+                handleCloseModal();
+              }}
+            >
+              Выйти из аккаунта
+            </button>
+          </div>
+        </Modal>
+      )}
     </>
   );
 };

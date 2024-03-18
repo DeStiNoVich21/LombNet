@@ -1,14 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import styles from "./FilterComponent.module.css";
 
-const FilterComponent = ({ onFilterChange, brands }) => {
+const FilterComponent = ({ onFilterChange, brands, selectedCategory }) => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [selectedBrands, setSelectedBrands] = useState([]);
 
+  // Обновляем выбранные бренды и цены при изменении параметров фильтра
+  useEffect(() => {
+    setSelectedBrands([]);
+    setMinPrice("");
+    setMaxPrice("");
+  }, [selectedCategory]);
+
   const handleFilter = () => {
     let filterParams = {};
+
+    if (selectedCategory) {
+      filterParams["category"] = selectedCategory;
+    }
 
     if (selectedBrands.length > 0) {
       filterParams["brand"] = selectedBrands.join(",");
@@ -21,7 +32,8 @@ const FilterComponent = ({ onFilterChange, brands }) => {
 
     const queryParams = new URLSearchParams(filterParams).toString();
 
-    console.log("Filter Params:", filterParams); // Добавленный console.log
+    console.log("Filter Params:", filterParams);
+    console.log("Query URL:", queryParams);
 
     onFilterChange(queryParams);
   };
@@ -70,15 +82,17 @@ const FilterComponent = ({ onFilterChange, brands }) => {
             <div key={index} className={styles.checkboxContainer}>
               <input
                 type="checkbox"
-                id={brand}
+                id={`brand_${index}`} // Уникальный идентификатор
                 value={brand}
                 checked={selectedBrands.includes(brand)}
                 onChange={handleBrandChange}
               />
-              <label htmlFor={brand}>{brand}</label>
+              <label htmlFor={`brand_${index}`}>{brand}</label>{" "}
+              {/* Ссылка на уникальный идентификатор */}
             </div>
           ))}
       </div>
+      <br />
       <button className={styles.applyButton} onClick={handleFilter}>
         Применить фильтр
       </button>
@@ -89,6 +103,7 @@ const FilterComponent = ({ onFilterChange, brands }) => {
 FilterComponent.propTypes = {
   onFilterChange: PropTypes.func.isRequired,
   brands: PropTypes.arrayOf(PropTypes.string).isRequired,
+  selectedCategory: PropTypes.string,
 };
 
 export default FilterComponent;

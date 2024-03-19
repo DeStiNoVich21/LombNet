@@ -20,7 +20,7 @@ const AddLombardForm = ({ onLombardAdded }) => {
 
   const handleAddLombard = async () => {
     try {
-      const token = Cookies.get("authToken"); // Извлекаем токен из куки
+      const token = Cookies.get("accessToken"); // Извлекаем токен из куки
       const response = await axios.post(
         `${API_BASE_URL}/api/lombard/addLombard`,
         lombardData,

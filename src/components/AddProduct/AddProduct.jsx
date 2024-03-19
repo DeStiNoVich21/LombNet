@@ -18,7 +18,7 @@ const AddProduct = ({ onProductAdded }) => {
   const [image, setImage] = useState(null); // Отдельный стейт для изображения
   const [categoryError, setCategoryError] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [token] = useState(Cookies.get("authToken"));
+  const [token] = useState(Cookies.get("accessToken")); // Используем accessToken
 
   const handleChange = (e) => {
     const { name, value } = e.target;

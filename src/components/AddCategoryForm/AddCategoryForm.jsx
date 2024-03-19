@@ -9,7 +9,7 @@ const AddCategoryForm = ({ onCategoryAdded }) => {
   const [name, setName] = useState("");
   const [image, setImage] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [token] = useState(Cookies.get("authToken"));
+  const [accessToken] = useState(Cookies.get("accessToken")); // Используем accessToken вместо authToken
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
@@ -38,7 +38,7 @@ const AddCategoryForm = ({ onCategoryAdded }) => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`, // Заменяем authToken на accessToken
           },
         }
       );

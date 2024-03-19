@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
-import styles from "./Header.module.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../UserContext";
 import Modal from "../Modal/Modal";
 import { jwtDecode } from "jwt-decode";
-import Cookies from "js-cookie"; // Импортируем библиотеку для работы с куками
+import Cookies from "js-cookie";
+import styles from "./Header.module.css";
 
 const Header = () => {
   const { user, logoutUser } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userId, setUserId] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const accessToken = Cookies.get("accessToken");
@@ -30,6 +31,13 @@ const Header = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    // При выходе из учетной записи сбрасываем состояние isAdmin
+    if (!user) {
+      setIsAdmin(false);
+    }
+  }, [user]);
+
   const handleLogout = () => {
     setIsModalOpen(true);
   };
@@ -39,9 +47,11 @@ const Header = () => {
   };
 
   const handleLogoutClick = () => {
-    Cookies.remove("accessToken"); // Удаляем токен из файлов cookie
-    logoutUser(); // Вызываем функцию logoutUser из контекста пользователя
-    handleCloseModal(); // Закрываем модальное окно
+    Cookies.remove("accessToken");
+    logoutUser();
+    handleCloseModal();
+    setIsAdmin(false); // Сбрасываем состояние isAdmin
+    navigate("/");
   };
 
   const isLoggedIn = !!user && !!userId;

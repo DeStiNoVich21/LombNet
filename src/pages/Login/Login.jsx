@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import API_BASE_URL from "../../apiConfig";
@@ -13,43 +13,8 @@ const Login = () => {
   });
 
   const navigate = useNavigate();
-  const { loginUser, isLoggedIn } = useUser();
+  const { loginUser } = useUser();
   const [error, setError] = useState(null);
-
-  useEffect(() => {
-    // Проверка наличия токена аутентификации в Cookies при загрузке страницы
-    const authToken = Cookies.get("authToken");
-    if (authToken && !isLoggedIn) {
-      // Если токен существует и пользователь не вошел в систему, автоматически войти
-      autoLogin(authToken);
-    }
-  }, [isLoggedIn]);
-
-  const autoLogin = async (authToken) => {
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/api/Authorization/AutoLogin`,
-        null,
-        {
-          headers: {
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
-
-      if (response.data.success) {
-        console.log("Автоматический вход выполнен успешно");
-        loginUser(response.data.user);
-        navigate("/");
-      } else {
-        console.error("Ошибка автоматического входа:", response.data.error);
-        // Удалить недействительный токен из Cookies
-        Cookies.remove("authToken");
-      }
-    } catch (error) {
-      console.error("Ошибка автоматического входа:", error);
-    }
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -65,22 +30,37 @@ const Login = () => {
         throw new Error("Имя пользователя и пароль обязательны для входа.");
       }
 
+      console.log("Отправка запроса на вход:", userData);
+
       const response = await axios.post(
         `${API_BASE_URL}/api/Authorization/Login`,
         userData
       );
 
-      const encodedJwt = response.data.encodedJwt;
+      const { refreshJwt } = response.data; // Получаем refreshJwt из ответа сервера
 
-      if (!encodedJwt) {
-        throw new Error("Токен аутентификации отсутствует в ответе сервера.");
+      if (!refreshJwt) {
+        throw new Error("refreshJwt отсутствует в ответе сервера.");
       }
 
-      Cookies.set("authToken", encodedJwt, { expires: 7 });
+      Cookies.set("refreshJwt", refreshJwt, { expires: 7 }); // Сохраняем refreshJwt в куки
 
       console.log("Вход выполнен успешно");
 
-      loginUser(response.data);
+      // После успешного входа, выполните GET запрос для получения accessToken
+      const refreshTokenResponse = await axios.get(
+        `${API_BASE_URL}/api/Authorization/refresh-token?refreshToken=${refreshJwt}`
+      );
+
+      const { accessToken } = refreshTokenResponse.data; // Получаем accessToken из ответа сервера
+
+      if (!accessToken) {
+        throw new Error("accessToken отсутствует в ответе сервера.");
+      }
+
+      Cookies.set("accessToken", accessToken, { expires: 7 }); // Сохраняем accessToken в куки
+
+      loginUser(response.data.user); // Передаем объект пользователя в функцию loginUser
 
       navigate("/");
     } catch (error) {

@@ -11,7 +11,7 @@ const ProductDetailsPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [transactionLoading, setTransactionLoading] = useState(false);
-  const { user, isLoggedIn } = useContext(UserContext);
+  const { isLoggedIn } = useContext(UserContext);
 
   useEffect(() => {
     fetchProductDetails();
@@ -19,10 +19,10 @@ const ProductDetailsPage = () => {
 
   const fetchProductDetails = async () => {
     try {
-      const authToken = Cookies.get("authToken");
+      const accessToken = Cookies.get("accessToken");
       const response = await fetch(`${API_BASE_URL}/api/Fuji/product/${id}`, {
         headers: {
-          Authorization: `Bearer ${authToken}`,
+          Authorization: `Bearer ${accessToken}`,
         },
       });
 
@@ -43,22 +43,17 @@ const ProductDetailsPage = () => {
       return;
     }
 
-    if (user.role !== "User") {
-      alert("You don't have the required role to buy the product.");
-      return;
-    }
-
     try {
       setTransactionLoading(true);
 
-      const authToken = Cookies.get("authToken");
+      const accessToken = Cookies.get("accessToken");
       const response = await fetch(
         `${API_BASE_URL}/api/TransactionHistory/BuyTheProduct`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${authToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             _idProduct: id,
@@ -69,7 +64,7 @@ const ProductDetailsPage = () => {
 
       if (response.ok) {
         console.log("Transaction completed successfully");
-        await updateProductStatus("Reserved");
+        await fetchProductDetails(); // Обновляем информацию о продукте после покупки
       } else {
         console.error("Failed to complete transaction");
       }
@@ -77,38 +72,6 @@ const ProductDetailsPage = () => {
       console.error("Error:", error);
     } finally {
       setTransactionLoading(false);
-    }
-  };
-
-  const updateProductStatus = async (newStatus) => {
-    try {
-      const authToken = Cookies.get("authToken");
-      const response = await fetch(
-        `${API_BASE_URL}/api/Fuji/product/${id}/status`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authToken}`,
-          },
-          body: JSON.stringify({
-            status: newStatus,
-          }),
-        }
-      );
-
-      if (response.ok) {
-        console.log("Product status updated successfully");
-        // Update the product state to reflect the new status
-        setProduct((prevProduct) => ({
-          ...prevProduct,
-          status: newStatus,
-        }));
-      } else {
-        console.error("Failed to update product status");
-      }
-    } catch (error) {
-      console.error("Error:", error);
     }
   };
 

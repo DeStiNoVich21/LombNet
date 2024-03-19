@@ -1,13 +1,29 @@
-import { jwtDecode } from "jwt-decode";
-import { useState } from "react";
-import styles from "../Header/Header.module.css";
+import { useState, useEffect } from "react";
+import styles from "./Header.module.css";
 import { Link } from "react-router-dom";
 import { useUser } from "../UserContext";
-import Modal from "../Modal/Modal"; // Путь к компоненту модального окна
+import Modal from "../Modal/Modal";
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie"; // Импортируем библиотеку для работы с куками
 
 const Header = () => {
   const { user, logoutUser } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [userId, setUserId] = useState(null); // Используем useState для хранения userId
+
+  useEffect(() => {
+    // При монтировании компонента извлекаем userId из куки
+    const accessToken = Cookies.get("accessToken");
+    if (accessToken) {
+      try {
+        const decodedToken = jwtDecode(accessToken);
+        const userIdFromToken = decodedToken["UserId"];
+        setUserId(userIdFromToken);
+      } catch (error) {
+        console.error("Ошибка декодирования токена:", error);
+      }
+    }
+  }, [user]); // Добавляем user в зависимости, чтобы useEffect вызывался при изменении пользователя
 
   const handleLogout = () => {
     setIsModalOpen(true);
@@ -31,6 +47,8 @@ const Header = () => {
     }
   }
 
+  const isLoggedIn = !!user && !!userId; // Проверяем наличие userId
+
   return (
     <>
       <header className={styles.header}>
@@ -50,14 +68,15 @@ const Header = () => {
               <div>Панель администратора</div>
             </Link>
           )}
-          {user ? (
+          {isLoggedIn && (
             <>
-              <span>{user.username}</span>
+              <span>{userId}</span> {/* Отображение userId */}
               <button onClick={handleLogout} className={styles.logout}>
                 Мой кабинет
               </button>
             </>
-          ) : (
+          )}
+          {!isLoggedIn && (
             <Link to="/login">
               <button className={styles.login}>Войти</button>
             </Link>
@@ -67,9 +86,7 @@ const Header = () => {
       {isModalOpen && (
         <Modal onClose={handleCloseModal}>
           <div>
-            {/* Добавляем ссылку на страницу истории покупок */}
             <Link to="/purchase-history">Мои покупки</Link>
-            {/* Добавляем функцию закрытия модального окна при нажатии на кнопку */}
             <button
               onClick={() => {
                 logoutUser();

@@ -37,30 +37,29 @@ const Login = () => {
         userData
       );
 
-      const { refreshJwt } = response.data; // Получаем refreshJwt из ответа сервера
+      const { refreshJwt } = response.data;
 
       if (!refreshJwt) {
         throw new Error("refreshJwt отсутствует в ответе сервера.");
       }
 
-      Cookies.set("refreshJwt", refreshJwt, { expires: 7 }); // Сохраняем refreshJwt в куки
+      Cookies.set("refreshJwt", refreshJwt, { expires: 7 });
 
       console.log("Вход выполнен успешно");
 
-      // После успешного входа, выполните GET запрос для получения accessToken
       const refreshTokenResponse = await axios.get(
         `${API_BASE_URL}/api/Authorization/refresh-token?refreshToken=${refreshJwt}`
       );
 
-      const { accessToken } = refreshTokenResponse.data; // Получаем accessToken из ответа сервера
+      const { accessToken } = refreshTokenResponse.data;
 
       if (!accessToken) {
         throw new Error("accessToken отсутствует в ответе сервера.");
       }
 
-      Cookies.set("accessToken", accessToken, { expires: 7 }); // Сохраняем accessToken в куки
+      Cookies.set("accessToken", accessToken, { expires: 7 });
 
-      loginUser(response.data.user); // Передаем объект пользователя в функцию loginUser
+      loginUser({ username: userData.username, accessToken }); // Передаем объект пользователя с accessToken
 
       navigate("/");
     } catch (error) {

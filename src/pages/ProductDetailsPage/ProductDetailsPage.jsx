@@ -1,21 +1,35 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styles from "./ProductDetailsPage.module.css";
 import PropTypes from "prop-types";
 import API_BASE_URL from "../../apiConfig";
 import Cookies from "js-cookie";
-import { UserContext } from "../../components/UserContext";
 import Header from "../../components/Header/Header";
+import { jwtDecode } from "jwt-decode";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [transactionLoading, setTransactionLoading] = useState(false);
-  const { isLoggedIn } = useContext(UserContext);
+  const [userId, setUserId] = useState(null); // Состояние для хранения userId
 
   useEffect(() => {
     fetchProductDetails();
   }, [id]);
+
+  useEffect(() => {
+    // Извлекаем userId из токена доступа в файле cookie
+    const accessToken = Cookies.get("accessToken");
+    if (accessToken) {
+      try {
+        const decodedToken = jwtDecode(accessToken);
+        const userIdFromToken = decodedToken["UserId"];
+        setUserId(userIdFromToken);
+      } catch (error) {
+        console.error("Ошибка декодирования токена:", error);
+      }
+    }
+  }, []);
 
   const fetchProductDetails = async () => {
     try {
@@ -38,15 +52,27 @@ const ProductDetailsPage = () => {
   };
 
   const handleBuyClick = async () => {
-    if (!isLoggedIn) {
-      alert("Please log in to buy the product.");
+    // Проверяем, авторизован ли пользователь
+    if (!userId) {
+      alert("Пожалуйста, войдите в систему, чтобы купить продукт.");
+      return;
+    }
+
+    // Проверяем, имеет ли пользователь роль "User"
+    const accessToken = Cookies.get("accessToken");
+    const decodedToken = jwtDecode(accessToken);
+    const userRole =
+      decodedToken[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+      ];
+    if (userRole !== "User") {
+      alert("У вас нет прав на покупку этого продукта.");
       return;
     }
 
     try {
       setTransactionLoading(true);
 
-      const accessToken = Cookies.get("accessToken");
       const response = await fetch(
         `${API_BASE_URL}/api/TransactionHistory/BuyTheProduct`,
         {
@@ -57,7 +83,8 @@ const ProductDetailsPage = () => {
           },
           body: JSON.stringify({
             _idProduct: id,
-            status: "paid",
+            _idUser: userId, // Передаем userId
+            status: "InQue",
           }),
         }
       );

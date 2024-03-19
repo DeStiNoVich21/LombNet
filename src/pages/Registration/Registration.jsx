@@ -1,8 +1,7 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./Registration.module.css";
-import Modal from "../../components/Modal/Modal";
 import API_BASE_URL from "../../apiConfig";
 
 const Registration = () => {
@@ -13,8 +12,9 @@ const Registration = () => {
     password: "",
   });
 
-  const [modalContent, setModalContent] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Состояние для отслеживания открытия модального окна
+  const [error, setError] = useState(""); // Состояние для хранения ошибки
+
+  const navigate = useNavigate(); // Используем useNavigate для программной навигации
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -25,50 +25,26 @@ const Registration = () => {
   };
 
   const handleRegistration = async () => {
-    // Проверка на заполненность всех полей
     if (
       !userData.username ||
       !userData.number ||
       !userData.email ||
       !userData.password
     ) {
-      setModalContent({
-        title: "Ошибка",
-        body: "Все поля должны быть заполнены.",
-        type: "error",
-      });
-      setIsModalOpen(true); // Открыть модальное окно при ошибке
+      setError("Все поля должны быть заполнены."); // Устанавливаем ошибку
       return;
     }
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${API_BASE_URL}/api/Authorization/Registration`,
         userData
       );
-
-      setModalContent({
-        title: "Успешная регистрация",
-        body: `Пользователь ${userData.username} успешно зарегистрирован.`,
-        type: "success",
-      });
-      setIsModalOpen(true); // Открыть модальное окно при успешной регистрации
+      // При успешной регистрации перенаправляем пользователя на страницу входа
+      navigate("/login");
     } catch (error) {
-      setModalContent({
-        title: "Ошибка регистрации",
-        body: error.response?.data?.message
-          ? error.response.data.message
-          : "Произошла ошибка во время регистрации.",
-        type: "error",
-      });
-      setIsModalOpen(true); // Открыть модальное окно при ошибке регистрации
-    }
-  };
-
-  const handleCloseModal = () => {
-    if (!modalContent) {
-      setIsModalOpen(false); // Закрыть модальное окно, если нет содержимого для отображения
-      console.log("gsfee");
+      console.error("Ошибка регистрации:", error);
+      setError("Произошла ошибка во время регистрации."); // Устанавливаем ошибку
     }
   };
 
@@ -124,18 +100,12 @@ const Registration = () => {
           >
             Зарегистрироваться
           </button>
+          {/* Отображаем ошибку, если она есть */}
+          {error && <div className={styles.error}>{error}</div>}
         </form>
-        <p>
+        <div className="log">
           Уже есть аккаунт? <Link to="/login">Войти</Link>.
-        </p>
-        {modalContent && ( // Показывать модальное окно, если есть контент для отображения
-          <Modal onClose={handleCloseModal}>
-            <div className={styles.modal_item}>
-              <h2>{modalContent.title}</h2>
-            </div>
-            <p>{modalContent.body}</p>
-          </Modal>
-        )}
+        </div>
       </div>
     </div>
   );

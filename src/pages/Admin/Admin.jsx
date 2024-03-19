@@ -3,6 +3,7 @@ import AddCategoryForm from "../../components/AddCategoryForm/AddCategoryForm";
 import AddProduct from "../../components/AddProduct/AddProduct";
 import AddLombardForm from "../../components/AddLombard/AddLombard";
 import styles from "../Admin/Admin.module.css";
+import Header from "../../components/Header/Header";
 
 export default function Admin() {
   const handleCategoryAdded = () => {
@@ -21,13 +22,16 @@ export default function Admin() {
   };
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.heading}>Администрирование</h1>
-      <div className={styles.addForm}>
-        <AddCategoryForm onCategoryAdded={handleCategoryAdded} />
-        <AddProduct onProductAdded={handleProductAdded} />
-        <AddLombardForm onLombardAdded={handleLombardAdded} />
+    <>
+      <Header />
+      <div className={styles.container}>
+        <h1 className={styles.heading}>Администрирование</h1>
+        <div className={styles.addForm}>
+          <AddCategoryForm onCategoryAdded={handleCategoryAdded} />
+          <AddProduct onProductAdded={handleProductAdded} />
+          <AddLombardForm onLombardAdded={handleLombardAdded} />
+        </div>
       </div>
-    </div>
+    </>
   );
 }

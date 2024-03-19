@@ -3,6 +3,7 @@ import axios from "axios";
 import PropTypes from "prop-types";
 import API_BASE_URL from "../../apiConfig";
 import Cookies from "js-cookie";
+import styles from "./AddProduct.module.css";
 
 const AddProduct = ({ onProductAdded }) => {
   const [formData, setFormData] = useState({
@@ -33,7 +34,7 @@ const AddProduct = ({ onProductAdded }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Предотвращаем стандартное поведение отправки формы
 
     if (!formData.category) {
       setCategoryError(true);
@@ -67,7 +68,16 @@ const AddProduct = ({ onProductAdded }) => {
       if (response.status === 200) {
         console.log("Product added successfully!");
         onProductAdded(formData.name);
-        window.location.reload();
+        // Сброс состояния формы после успешной отправки
+        setFormData({
+          name: "",
+          category: "",
+          description: "",
+          price: 0,
+          status: "In_stock",
+          brand: "",
+        });
+        setImage(null); // Сброс изображения
       } else if (response.status === 401) {
         console.error("Unauthorized. Check if the token is valid.");
       } else {
@@ -80,75 +90,76 @@ const AddProduct = ({ onProductAdded }) => {
   };
 
   return (
-    <form style={styles.form} onSubmit={handleSubmit}>
+    <form className={styles.form} onSubmit={handleSubmit}>
       <h2>Добавление товара</h2>
-      <label style={styles.label}>
+      <label className={styles.label}>
         Название:
         <input
           type="text"
           name="name"
           value={formData.name}
           onChange={handleChange}
-          style={styles.input}
+          className={styles.input}
         />
       </label>
-      <label style={styles.label}>
+      <label className={styles.label}>
         Категория:
         <input
           type="text"
           name="category"
           value={formData.category}
           onChange={handleChange}
-          className={categoryError ? styles.selectError : ""}
-          style={styles.input}
+          className={`${styles.input} ${
+            categoryError ? styles.selectError : ""
+          }`}
         />
         {categoryError && (
-          <p style={styles.error}>Пожалуйста, выберите категорию.</p>
+          <p className={styles.error}>Пожалуйста, выберите категорию.</p>
         )}
       </label>
-      <label style={styles.label}>
+      <label className={styles.label}>
         Бренд:
         <input
           type="text"
           name="brand"
           value={formData.brand}
           onChange={handleChange}
-          style={styles.input}
+          className={styles.input}
         />
       </label>
-      <label style={styles.label}>
+      <label className={styles.label}>
         Описание:
         <textarea
           name="description"
           value={formData.description}
           onChange={handleChange}
-          style={styles.input}
+          className={styles.input}
         />
       </label>
-      <label style={styles.label}>
+      <label className={styles.label}>
         Цена:
         <input
           type="number"
           name="price"
           value={formData.price}
           onChange={handleChange}
-          style={styles.input}
+          className={styles.input}
         />
       </label>
-      <label style={styles.label}>
+      <label className={styles.label}>
         Картинка:
         <input
           type="file"
           accept="image/*"
           onChange={handleImageChange}
-          style={styles.input}
+          className={styles.input}
           required
         />
         {imageError && (
-          <p style={styles.error}>Пожалуйста, выберите изображение.</p>
+          <p className={styles.error}>Пожалуйста, выберите изображение.</p>
         )}
       </label>
-      <button type="submit" style={styles.button}>
+      <button type="submit" className={styles.button}>
         Добавить товар
       </button>
     </form>
@@ -157,44 +168,6 @@ const AddProduct = ({ onProductAdded }) => {
 
 AddProduct.propTypes = {
   onProductAdded: PropTypes.func.isRequired,
-};
-
-const styles = {
-  form: {
-    maxWidth: "400px",
-    margin: "0 auto",
-  },
-  label: {
-    display: "block",
-    marginBottom: "10px",
-  },
-  input: {
-    width: "100%",
-    padding: "8px",
-    fontSize: "16px",
-    border: "1px solid #ccc",
-    borderRadius: "4px",
-    boxSizing: "border-box",
-    marginBottom: "10px",
-  },
-  selectError: {
-    borderColor: "#dc3545",
-  },
-  button: {
-    backgroundColor: "#007bff",
-    color: "#fff",
-    border: "none",
-    padding: "10px 20px",
-    fontSize: "16px",
-    borderRadius: "4px",
-    cursor: "pointer",
-    transition: "background-color 0.3s ease",
-    marginRight: "10px",
-  },
-  error: {
-    color: "#dc3545",
-    marginBottom: "10px",
-  },
 };
 
 export default AddProduct;

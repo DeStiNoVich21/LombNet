@@ -4,6 +4,7 @@ import styles from "./Product.module.css";
 import Cookies from "js-cookie";
 import API_BASE_URL from "../../apiConfig";
 import FilterComponent from "../../components/FilterComponent/FilterComponent";
+import Header from "../../components/Header/Header";
 
 const Product = () => {
   const { category } = useParams();
@@ -29,7 +30,11 @@ const Product = () => {
       if (response.ok) {
         const data = await response.json();
 
-        const filteredProducts = data.filter((item) => !item.isDeleted);
+        // Фильтруем товары с статусом "In_stock"
+        const filteredProducts = data.filter(
+          (item) => !item.isDeleted && item.status === "In_stock"
+        );
+
         setProduct(filteredProducts);
 
         const uniqueBrands = [
@@ -47,50 +52,51 @@ const Product = () => {
   };
 
   const handleFilterChange = (filterParams) => {
-    // Переносим вызов fetchProductDetails сюда
     fetchProductDetails(filterParams);
   };
 
   useEffect(() => {
-    // Вызываем fetchProductDetails без параметров, чтобы получить все товары при первой загрузке
     fetchProductDetails();
   }, []);
 
   return (
-    <div className={styles.productPage}>
-      <div className={styles.filterSection}>
-        <FilterComponent
-          onFilterChange={handleFilterChange}
-          brands={brands}
-          selectedCategory={category}
-        />
-      </div>
-      <div className={styles.productDetails}>
-        {product &&
-          product.map((item, index) => (
-            <Link
-              key={index}
-              to={`/product/${item.id}`}
-              style={{ textDecoration: "none", color: "black" }}
-            >
-              <div className={styles.productItem}>
-                <div className={styles.productImage}>
-                  {item.imageFileName && (
-                    <img
-                      src={`${API_BASE_URL}/api/Fuji/getImage/${item.imageFileName}`}
-                      alt={item.name}
-                    />
-                  )}
+    <>
+      <Header />
+      <div className={styles.productPage}>
+        <div className={styles.filterSection}>
+          <FilterComponent
+            onFilterChange={handleFilterChange}
+            brands={brands}
+            selectedCategory={category}
+          />
+        </div>
+        <div className={styles.productDetails}>
+          {product &&
+            product.map((item, index) => (
+              <Link
+                key={index}
+                to={`/product/${item.id}`}
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <div className={styles.productItem}>
+                  <div className={styles.productImage}>
+                    {item.imageFileName && (
+                      <img
+                        src={`${API_BASE_URL}/api/Fuji/getImage/${item.imageFileName}`}
+                        alt={item.name}
+                      />
+                    )}
+                  </div>
+                  <div className={styles.productText}>
+                    <h2>{item.name}</h2>
+                    <p className={styles.productPrice}>Цена: {item.price}</p>
+                  </div>
                 </div>
-                <div className={styles.productText}>
-                  <h2>{item.name}</h2>
-                  <p className={styles.productPrice}>Цена: {item.price}</p>
-                </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

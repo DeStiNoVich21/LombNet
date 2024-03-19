@@ -7,9 +7,10 @@
   background-color: #f4f4f4;
 }
 
-.registrationContainer {
-  position: relative;
-  text-align: center; /* Center the text within the container */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .registrationTitle {
@@ -29,7 +30,8 @@
 
 .formLabel {
   margin-bottom: 10px;
-  text-align: left;
+  display: flex;
+  flex-direction: column;
 }
 
 .input {
@@ -52,45 +54,24 @@
   background-color: #22335f;
 }
 
-p a {
+.link {
   color: #3498db;
   text-decoration: none;
   margin-top: 10px;
 }
 
-p a:hover {
+.link:hover {
   text-decoration: underline;
 }
 
-.modal {
-  display: none;
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 300px;
-  background-color: #f4f4f4;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  z-index: 1000;
-  display: flex; /* Добавлено свойство flex */
-  justify-content: space-between; /* Распределение элементов с промежутками между ними */
-  align-items: center; /* Выравнивание элементов по центру вертикально */
-}
-
 .modal_item {
-  display: flex;
-  justify-content: space-between;
+  margin-bottom: 15px;
 }
 
-.modalContent {
-  position: relative;
+.registrationTitle {
+  text-align: center;
 }
 
-.closeButton {
-  cursor: pointer;
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: #333;
+.log {
+  text-align: center;
 }

@@ -10,15 +10,21 @@ const Header = () => {
   const { user, logoutUser } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userId, setUserId] = useState(null); // Используем useState для хранения userId
+  const [isAdmin, setIsAdmin] = useState(false); // Используем useState для хранения информации о роли пользователя
 
   useEffect(() => {
-    // При монтировании компонента извлекаем userId из куки
+    // При монтировании компонента извлекаем userId и информацию о роли из кук
     const accessToken = Cookies.get("accessToken");
     if (accessToken) {
       try {
         const decodedToken = jwtDecode(accessToken);
         const userIdFromToken = decodedToken["UserId"];
         setUserId(userIdFromToken);
+        const userRole =
+          decodedToken[
+            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          ];
+        setIsAdmin(userRole === "Moderator"); // Устанавливаем значение isAdmin в зависимости от роли пользователя
       } catch (error) {
         console.error("Ошибка декодирования токена:", error);
       }
@@ -32,20 +38,6 @@ const Header = () => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
-
-  let isAdmin = false;
-
-  if (user && user.encodedJwt) {
-    try {
-      const decodedToken = jwtDecode(user.encodedJwt);
-      isAdmin =
-        decodedToken[
-          "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ] === "Moderator";
-    } catch (error) {
-      console.error("Ошибка декодирования токена:", error);
-    }
-  }
 
   const isLoggedIn = !!user && !!userId; // Проверяем наличие userId
 

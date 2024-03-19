@@ -9,11 +9,10 @@ import Cookies from "js-cookie"; // Импортируем библиотеку 
 const Header = () => {
   const { user, logoutUser } = useUser();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [userId, setUserId] = useState(null); // Используем useState для хранения userId
-  const [isAdmin, setIsAdmin] = useState(false); // Используем useState для хранения информации о роли пользователя
+  const [userId, setUserId] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    // При монтировании компонента извлекаем userId и информацию о роли из кук
     const accessToken = Cookies.get("accessToken");
     if (accessToken) {
       try {
@@ -24,12 +23,12 @@ const Header = () => {
           decodedToken[
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
           ];
-        setIsAdmin(userRole === "Moderator"); // Устанавливаем значение isAdmin в зависимости от роли пользователя
+        setIsAdmin(userRole === "Moderator");
       } catch (error) {
         console.error("Ошибка декодирования токена:", error);
       }
     }
-  }, [user]); // Добавляем user в зависимости, чтобы useEffect вызывался при изменении пользователя
+  }, [user]);
 
   const handleLogout = () => {
     setIsModalOpen(true);
@@ -39,7 +38,13 @@ const Header = () => {
     setIsModalOpen(false);
   };
 
-  const isLoggedIn = !!user && !!userId; // Проверяем наличие userId
+  const handleLogoutClick = () => {
+    Cookies.remove("accessToken"); // Удаляем токен из файлов cookie
+    logoutUser(); // Вызываем функцию logoutUser из контекста пользователя
+    handleCloseModal(); // Закрываем модальное окно
+  };
+
+  const isLoggedIn = !!user && !!userId;
 
   return (
     <>
@@ -62,7 +67,7 @@ const Header = () => {
           )}
           {isLoggedIn && (
             <>
-              <span>{userId}</span> {/* Отображение userId */}
+              <span>{userId}</span>
               <button onClick={handleLogout} className={styles.logout}>
                 Мой кабинет
               </button>
@@ -79,14 +84,7 @@ const Header = () => {
         <Modal onClose={handleCloseModal}>
           <div>
             <Link to="/purchase-history">Мои покупки</Link>
-            <button
-              onClick={() => {
-                logoutUser();
-                handleCloseModal();
-              }}
-            >
-              Выйти из аккаунта
-            </button>
+            <button onClick={handleLogoutClick}>Выйти из аккаунта</button>
           </div>
         </Modal>
       )}

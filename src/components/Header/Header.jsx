@@ -11,6 +11,7 @@ const Header = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [userId, setUserId] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isUser, setIsUser] = useState(false); // Добавляем состояние для проверки на пользователя
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +26,7 @@ const Header = () => {
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
           ];
         setIsAdmin(userRole === "Moderator");
+        setIsUser(userRole === "User"); // Проверяем роль пользователя
       } catch (error) {
         console.error("Ошибка декодирования токена:", error);
       }
@@ -32,9 +34,10 @@ const Header = () => {
   }, [user]);
 
   useEffect(() => {
-    // При выходе из учетной записи сбрасываем состояние isAdmin
+    // При выходе из учетной записи сбрасываем состояние isAdmin и isUser
     if (!user) {
       setIsAdmin(false);
+      setIsUser(false);
     }
   }, [user]);
 
@@ -51,6 +54,7 @@ const Header = () => {
     logoutUser();
     handleCloseModal();
     setIsAdmin(false); // Сбрасываем состояние isAdmin
+    setIsUser(false); // Сбрасываем состояние isUser
     navigate("/");
   };
 
@@ -70,11 +74,6 @@ const Header = () => {
             columnGap: "20px",
           }}
         >
-          {isAdmin && (
-            <Link to="/admin" className={styles.adminLink}>
-              <div>Панель администратора</div>
-            </Link>
-          )}
           {isLoggedIn && (
             <>
               <span>{userId}</span>
@@ -93,7 +92,14 @@ const Header = () => {
       {isModalOpen && (
         <Modal onClose={handleCloseModal}>
           <div>
-            <Link to="/purchase-history">Мои покупки</Link>
+            {isUser && ( // Проверяем, является ли пользователь пользователем
+              <Link to="/purchase-history">Мои покупки</Link>
+            )}
+            {isAdmin && ( // Проверяем, является ли пользователь администратором
+              <Link to="/admin" className={styles.adminLink}>
+                <div>Панель администратора</div>
+              </Link>
+            )}
             <button onClick={handleLogoutClick}>Выйти из аккаунта</button>
           </div>
         </Modal>

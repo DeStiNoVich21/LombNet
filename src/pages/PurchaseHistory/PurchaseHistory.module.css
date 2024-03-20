@@ -1,0 +1,43 @@
+.purchaseHistory {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.purchaseHistory h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.purchaseHistory ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.purchaseHistory li {
+  background-color: #fff;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.purchaseHistory li div {
+  margin-bottom: 10px;
+  padding: 8px 12px;
+}
+
+.purchaseHistory p {
+  font-style: italic;
+  text-align: center;
+}
+
+.transactionStatus {
+  width: calc(100% - 24px); /* Вычитаем отступы padding: 8px 12px; */
+  background-color: #b3ffb3; /* Светло-зеленый цвет */
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}

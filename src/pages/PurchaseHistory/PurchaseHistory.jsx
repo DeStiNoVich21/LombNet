@@ -3,6 +3,8 @@ import axios from "axios"; // Импортируем axios для выполне
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import styles from "./PurchaseHistory.module.css";
+import Header from "../../components/Header/Header";
+import API_BASE_URL from "../../apiConfig";
 
 const PurchaseHistory = () => {
   const [transactions, setTransactions] = useState([]);
@@ -12,7 +14,7 @@ const PurchaseHistory = () => {
     const fetchPurchaseHistory = async () => {
       try {
         const response = await axios.get(
-          `https://localhost:7211/api/TransactionHistory/GetMyTransactions?id=UserId%3A%20${getUserIdFromToken()}`,
+          `${API_BASE_URL}/api/TransactionHistory/GetMyTransactions?id=UserId%3A%20${getUserIdFromToken()}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,
@@ -39,23 +41,29 @@ const PurchaseHistory = () => {
   };
 
   return (
-    <div className={styles.purchaseHistory}>
-      <h2>История покупок</h2>
-      {transactions.length > 0 ? (
-        <ul>
-          {transactions.map((transaction) => (
-            <li key={transaction.id}>
-              <div>Название продукта: {transaction.productName}</div>
-              <div>Дата покупки: {transaction.purchaseDate}</div>
-              <div>Цена: {transaction.price}</div>
-              {/* Другие данные о транзакции */}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>У вас пока нет покупок.</p>
-      )}
-    </div>
+    <>
+      <Header />
+      <div className={styles.purchaseHistory}>
+        <h2 className={styles.heading}>История покупок</h2>
+        {transactions.length > 0 ? (
+          <ul className={styles.transactionList}>
+            {transactions.map((transaction) => (
+              <li key={transaction.id} className={styles.transaction}>
+                <div className={styles.transactionStatus}>
+                  {transaction.status}
+                </div>{" "}
+                {/* Блок для отображения статуса товара */}
+                <div>Название продукта: {transaction.productName}</div>
+                <div>Цена: {transaction.price}</div>
+                {/* Другие данные о транзакции */}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className={styles.noTransactions}>У вас пока нет покупок.</p>
+        )}
+      </div>
+    </>
   );
 };
 

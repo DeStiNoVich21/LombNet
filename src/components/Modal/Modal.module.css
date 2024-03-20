@@ -1,31 +1,41 @@
-/* Modal container */
 .modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  max-width: 400px;
+  height: auto;
+  max-height: 80%;
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-in-out;
+  z-index: 500; /* Повышаем z-index модального окна */
+}
+
+.modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Затемненный фон */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 499; /* Устанавливаем меньший z-index для затемнения */
 }
 
 /* Modal content */
-.modalСontent {
+.modalContent {
   background-color: #fff; /* Цвет фона модального окна */
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Тень */
+  /* Убираем тень */
+  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); */
   max-width: 400px;
   width: 90%;
   position: relative; /* Добавляем для корректного позиционирования кнопки закрытия */
-}
-
-/* Modal content container */
-.modalContentContainer div {
-  display: flex;
-  flex-direction: column; /* Располагаем элементы в колонку */
+  animation: slideIn 0.3s ease-in-out; /* Анимация появления */
 }
 
 /* Close button */
@@ -38,15 +48,24 @@
   color: #666; /* Цвет иконки закрытия */
 }
 
-/* Additional styles for the links within the modal */
-.modalContent a {
-  display: block;
-  margin-bottom: 10px;
-  color: #007bff; /* Цвет ссылок */
-  text-decoration: none;
+/* Анимация появления модального окна */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-/* Additional styles for the links within the modal on hover */
-.modalContent a:hover {
-  text-decoration: underline;
+/* Анимация появления контента в модальном окне */
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

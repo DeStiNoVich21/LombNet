@@ -8,12 +8,14 @@ import ProductDetailsPage from "./pages/ProductDetailsPage/ProductDetailsPage";
 import PurchaseHistory from "./pages/PurchaseHistory/PurchaseHistory";
 import { UserProvider } from "./components/UserContext";
 import { useState, useEffect } from "react";
+import SuperAdmin from "./pages/SuperAdmin/SuperAdmin";
+import API_BASE_URL from "./apiConfig";
 
 export default function App() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    fetch("https://localhost:7211/api/Fuji/categories")
+    fetch(`${API_BASE_URL}/api/Fuji/categories`)
       .then((response) => response.json())
       .then((data) => setCategories(data))
       .catch((error) => console.error("Error fetching categories:", error));
@@ -25,6 +27,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/superadmin" element={<SuperAdmin />} />
           <Route path="/registration" element={<Registration />} />
           <Route path="/login" element={<Login />} />
           <Route path="/:category" element={<Product />} />

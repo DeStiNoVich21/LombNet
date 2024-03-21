@@ -9,6 +9,7 @@ const Header = () => {
   const { user, logoutUser } = useUser();
   const [userId, setUserId] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isModerator, setIsModerator] = useState(false);
   const [isUser, setIsUser] = useState(false);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const navigate = useNavigate();
@@ -24,7 +25,8 @@ const Header = () => {
           decodedToken[
             "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
           ];
-        setIsAdmin(userRole === "Moderator");
+        setIsAdmin(userRole === "Admin");
+        setIsModerator(userRole === "Moderator");
         setIsUser(userRole === "User");
       } catch (error) {
         console.error("Ошибка декодирования токена:", error);
@@ -40,6 +42,7 @@ const Header = () => {
     Cookies.remove("accessToken");
     logoutUser();
     setIsAdmin(false);
+    setIsModerator(false);
     setIsUser(false);
     setIsPanelOpen(false);
     navigate("/");
@@ -66,9 +69,14 @@ const Header = () => {
                     Мои покупки
                   </Link>
                 )}
-                {isAdmin && (
+                {isModerator && (
                   <Link to="/admin" className={styles.panelLink}>
                     Панель администратора
+                  </Link>
+                )}
+                {isAdmin && (
+                  <Link to="/superadmin" className={styles.panelLink}>
+                    Панель суперадмина
                   </Link>
                 )}
                 <button

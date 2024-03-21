@@ -51,16 +51,7 @@ const PurchaseHistory = () => {
           },
         }
       );
-      // Обновляем список транзакций после отмены
-      const response = await axios.get(
-        `${API_BASE_URL}/api/TransactionHistory/GetMyTransactions/${getUserIdFromToken()}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-      setTransactions(response.data);
+      refreshTransactions();
     } catch (error) {
       console.error("Ошибка при отмене транзакции:", error);
     }
@@ -77,7 +68,14 @@ const PurchaseHistory = () => {
           },
         }
       );
-      // Обновляем список транзакций после завершения
+      refreshTransactions();
+    } catch (error) {
+      console.error("Ошибка при завершении транзакции:", error);
+    }
+  };
+
+  const refreshTransactions = async () => {
+    try {
       const response = await axios.get(
         `${API_BASE_URL}/api/TransactionHistory/GetMyTransactions/${getUserIdFromToken()}`,
         {
@@ -88,7 +86,20 @@ const PurchaseHistory = () => {
       );
       setTransactions(response.data);
     } catch (error) {
-      console.error("Ошибка при завершении транзакции:", error);
+      console.error("Ошибка при обновлении списка транзакций:", error);
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case "InQue":
+        return "В ожидании";
+      case "Completed":
+        return "Товар куплен";
+      case "Rejected":
+        return "Товар отменен";
+      default:
+        return "Неизвестный статус";
     }
   };
 
@@ -101,10 +112,38 @@ const PurchaseHistory = () => {
           <ul className={styles.transactionList}>
             {transactions.map((transaction, index) => (
               <li key={index} className={styles.transaction}>
-                <div className={styles.transactionStatus}>
-                  {transaction[0].transaction.status === "InQue"
-                    ? "В ожидании"
-                    : transaction[0].transaction.status}
+                <div
+                  className={`${styles.transactionStatus} ${
+                    transaction[0].transaction.status === "InQue"
+                      ? styles.pending
+                      : transaction[0].transaction.status === "Completed"
+                      ? styles.completed
+                      : styles.rejected
+                  }`}
+                >
+                  <span>
+                    {getStatusText(transaction[0].transaction.status)}
+                  </span>
+                  {transaction[0].transaction.status === "InQue" && (
+                    <div className={styles.buttonContainer}>
+                      <button
+                        className={`${styles.actionButton} ${styles.cancelButton}`}
+                        onClick={() =>
+                          cancelTransaction(transaction[0].transaction.id)
+                        }
+                      >
+                        Отмена
+                      </button>
+                      <button
+                        className={`${styles.actionButton} ${styles.buyButton}`}
+                        onClick={() =>
+                          completeTransaction(transaction[0].transaction.id)
+                        }
+                      >
+                        Купить
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div>Название продукта: {transaction[0].product.name}</div>
                 <div>Цена: {transaction[0].product.price}</div>
@@ -113,26 +152,6 @@ const PurchaseHistory = () => {
                   {transaction[0].lombard.address},{" "}
                   {transaction[0].lombard.number}
                 </div>
-                {transaction[0].transaction.status === "InQue" && (
-                  <div className={styles.buttonContainer}>
-                    <button
-                      className={styles.buyButton}
-                      onClick={() =>
-                        completeTransaction(transaction[0].transaction.id)
-                      }
-                    >
-                      Купить
-                    </button>
-                    <button
-                      className={styles.cancelButton}
-                      onClick={() =>
-                        cancelTransaction(transaction[0].transaction.id)
-                      }
-                    >
-                      Отмена
-                    </button>
-                  </div>
-                )}
               </li>
             ))}
           </ul>

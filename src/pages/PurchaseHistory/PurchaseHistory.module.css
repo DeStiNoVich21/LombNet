@@ -25,7 +25,10 @@
 }
 
 .purchaseHistory li div {
-  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* margin-bottom: 10px; */
   padding: 8px 12px;
 }
 
@@ -36,8 +39,46 @@
 
 .transactionStatus {
   width: calc(100% - 24px); /* Вычитаем отступы padding: 8px 12px; */
-  background-color: #eaeaea; /* Светло-зеленый цвет */
   padding: 8px 12px;
   border-radius: 4px;
   margin-bottom: 8px;
+}
+
+.pending {
+  background-color: #ccc; /* Серый цвет для ожидания */
+}
+
+.completed {
+  background-color: #d4edda; /* Светло-зеленый цвет для завершенных */
+}
+
+.rejected {
+  background-color: #f8d7da; /* Красный цвет для отмененных */
+}
+
+.cancelButton {
+  background-color: #dc3545; /* Красный цвет для кнопки отмены */
+  color: #fff; /* Белый текст */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Плавное изменение цвета */
+}
+
+.cancelButton:hover {
+  background-color: #c82333; /* Темнокрасный при наведении */
+}
+
+.buyButton {
+  background-color: #28a745; /* Зеленый цвет для кнопки купить */
+  color: #fff; /* Белый текст */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Плавное изменение цвета */
+  margin-left: 20px;
+}
+
+.buyButton:hover {
+  background-color: #218838; /* Темнозеленый при наведении */
 }

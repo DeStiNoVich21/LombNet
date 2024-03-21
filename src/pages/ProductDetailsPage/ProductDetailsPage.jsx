@@ -4,7 +4,6 @@ import styles from "./ProductDetailsPage.module.css";
 import PropTypes from "prop-types";
 import API_BASE_URL from "../../apiConfig";
 import Cookies from "js-cookie";
-import Header from "../../components/Header/Header";
 import { jwtDecode } from "jwt-decode";
 
 const ProductDetailsPage = () => {
@@ -107,8 +106,7 @@ const ProductDetailsPage = () => {
   }
 
   return (
-    <>
-      <Header />
+    <div className={styles.container}>
       <div className={styles.productDetails}>
         <div className={styles.productImage}>
           {product.imageFileName && (
@@ -120,8 +118,9 @@ const ProductDetailsPage = () => {
         </div>
         <div className={styles.productInfo}>
           <h2>{product.name}</h2>
-          <p>Цена: {product.price}</p>
-          <p>Описание: {product.description}</p>
+          <div>Бренд: {product.brand}</div>
+          <div>Цена: {product.price}₸</div>
+          <div>Описание: {product.description}</div>
           <button
             className={styles.buyButton}
             onClick={handleBuyClick}
@@ -131,7 +130,7 @@ const ProductDetailsPage = () => {
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

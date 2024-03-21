@@ -27,9 +27,9 @@ export default function Admin() {
       <div className={styles.container}>
         <h1 className={styles.heading}>Администрирование</h1>
         <div className={styles.addForm}>
+          <AddLombardForm onLombardAdded={handleLombardAdded} />
           <AddCategoryForm onCategoryAdded={handleCategoryAdded} />
           <AddProduct onProductAdded={handleProductAdded} />
-          <AddLombardForm onLombardAdded={handleLombardAdded} />
         </div>
       </div>
     </>

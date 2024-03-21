@@ -36,7 +36,7 @@
 
 .transactionStatus {
   width: calc(100% - 24px); /* Вычитаем отступы padding: 8px 12px; */
-  background-color: #b3ffb3; /* Светло-зеленый цвет */
+  background-color: #eaeaea; /* Светло-зеленый цвет */
   padding: 8px 12px;
   border-radius: 4px;
   margin-bottom: 8px;

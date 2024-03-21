@@ -22,7 +22,7 @@ const FilterComponent = ({ onFilterChange, brands, selectedCategory }) => {
     }
 
     if (selectedBrands.length > 0) {
-      filterParams["brand"] = selectedBrands.join(",");
+      filterParams["brands"] = selectedBrands.join(","); // Используем "brands" вместо "brand"
     }
 
     if (minPrice && maxPrice) {

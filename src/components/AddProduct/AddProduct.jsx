@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
 import API_BASE_URL from "../../apiConfig";
@@ -15,10 +15,25 @@ const AddProduct = ({ onProductAdded }) => {
     brand: "",
   });
 
-  const [image, setImage] = useState(null); // Отдельный стейт для изображения
+  const [categories, setCategories] = useState([]); // State to hold categories
+  const [image, setImage] = useState(null);
   const [categoryError, setCategoryError] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const [token] = useState(Cookies.get("accessToken")); // Используем accessToken
+  const [token] = useState(Cookies.get("accessToken"));
+
+  useEffect(() => {
+    // Fetch categories on component mount
+    async function fetchCategories() {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/Fuji/categories`);
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    }
+
+    fetchCategories();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,11 +45,11 @@ const AddProduct = ({ onProductAdded }) => {
   };
 
   const handleImageChange = (e) => {
-    setImage(e.target.files[0]); // Обновляем состояние изображения при его изменении
+    setImage(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Предотвращаем стандартное поведение отправки формы
+    e.preventDefault();
 
     if (!formData.category) {
       setCategoryError(true);
@@ -53,7 +68,7 @@ const AddProduct = ({ onProductAdded }) => {
         formDataToSend.append(key, formData[key]);
       }
 
-      formDataToSend.append("image", image); // Добавляем изображение к данным для отправки
+      formDataToSend.append("image", image);
 
       const response = await axios.post(
         `${API_BASE_URL}/api/Fuji/addProduct`,
@@ -68,7 +83,6 @@ const AddProduct = ({ onProductAdded }) => {
       if (response.status === 200) {
         console.log("Product added successfully!");
         onProductAdded(formData.name);
-        // Сброс состояния формы после успешной отправки
         setFormData({
           name: "",
           category: "",
@@ -77,7 +91,7 @@ const AddProduct = ({ onProductAdded }) => {
           status: "In_stock",
           brand: "",
         });
-        setImage(null); // Сброс изображения
+        setImage(null);
       } else if (response.status === 401) {
         console.error("Unauthorized. Check if the token is valid.");
       } else {
@@ -104,15 +118,23 @@ const AddProduct = ({ onProductAdded }) => {
       </label>
       <label className={styles.label}>
         Категория:
-        <input
-          type="text"
+        <select
           name="category"
           value={formData.category}
           onChange={handleChange}
           className={`${styles.input} ${
             categoryError ? styles.selectError : ""
           }`}
-        />
+        >
+          <option value="" disabled>
+            Выберите категорию
+          </option>
+          {categories.map((cat) => (
+            <option key={cat.category} value={cat.category}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
         {categoryError && (
           <p className={styles.error}>Пожалуйста, выберите категорию.</p>
         )}

@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import API_BASE_URL from "../../apiConfig";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
+import Header from "../../components/Header/Header";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -106,31 +107,34 @@ const ProductDetailsPage = () => {
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.productDetails}>
-        <div className={styles.productImage}>
-          {product.imageFileName && (
-            <img
-              src={`${API_BASE_URL}/api/Fuji/getImage/${product.imageFileName}`}
-              alt={product.name}
-            />
-          )}
-        </div>
-        <div className={styles.productInfo}>
-          <h2>{product.name}</h2>
-          <div>Бренд: {product.brand}</div>
-          <div>Цена: {product.price}₸</div>
-          <div>Описание: {product.description}</div>
-          <button
-            className={styles.buyButton}
-            onClick={handleBuyClick}
-            disabled={transactionLoading}
-          >
-            {transactionLoading ? "Buying..." : "Купить"}
-          </button>
+    <>
+      <Header />
+      <div className={styles.container}>
+        <div className={styles.productDetails}>
+          <div className={styles.productImage}>
+            {product.imageFileName && (
+              <img
+                src={`${API_BASE_URL}/api/Fuji/getImage/${product.imageFileName}`}
+                alt={product.name}
+              />
+            )}
+          </div>
+          <div className={styles.productInfo}>
+            <h2>{product.name}</h2>
+            <div>Бренд: {product.brand}</div>
+            <div>Цена: {product.price}₸</div>
+            <div>Описание: {product.description}</div>
+            <button
+              className={styles.buyButton}
+              onClick={handleBuyClick}
+              disabled={transactionLoading}
+            >
+              {transactionLoading ? "Buying..." : "Купить"}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

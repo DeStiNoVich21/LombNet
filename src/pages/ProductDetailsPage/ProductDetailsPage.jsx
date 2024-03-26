@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom"; // Импортируем useNavigate
 import styles from "./ProductDetailsPage.module.css";
 import PropTypes from "prop-types";
 import API_BASE_URL from "../../apiConfig";
@@ -11,14 +11,14 @@ const ProductDetailsPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [transactionLoading, setTransactionLoading] = useState(false);
-  const [userId, setUserId] = useState(null); // Состояние для хранения userId
+  const [userId, setUserId] = useState(null);
+  const navigate = useNavigate(); // Используем useNavigate для программного перехода
 
   useEffect(() => {
     fetchProductDetails();
   }, [id]);
 
   useEffect(() => {
-    // Извлекаем userId из токена доступа в файле cookie
     const accessToken = Cookies.get("accessToken");
     if (accessToken) {
       try {
@@ -52,13 +52,11 @@ const ProductDetailsPage = () => {
   };
 
   const handleBuyClick = async () => {
-    // Проверяем, авторизован ли пользователь
     if (!userId) {
       alert("Пожалуйста, войдите в систему, чтобы купить продукт.");
       return;
     }
 
-    // Проверяем, имеет ли пользователь роль "User"
     const accessToken = Cookies.get("accessToken");
     const decodedToken = jwtDecode(accessToken);
     const userRole =
@@ -83,7 +81,7 @@ const ProductDetailsPage = () => {
           },
           body: JSON.stringify({
             _idProduct: id,
-            _idUser: userId, // Передаем userId
+            _idUser: userId,
             status: "InQue",
           }),
         }
@@ -91,7 +89,8 @@ const ProductDetailsPage = () => {
 
       if (response.ok) {
         console.log("Transaction completed successfully");
-        await fetchProductDetails(); // Обновляем информацию о продукте после покупки
+        await fetchProductDetails();
+        navigate("/purchase-history"); // Перенаправляем пользователя на страницу истории покупок
       } else {
         console.error("Failed to complete transaction");
       }

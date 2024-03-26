@@ -53,7 +53,7 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <Link to="/" className={styles.logo}>
-        <img src="/public/logo.svg" alt="" className={styles.logoImage} />
+        <img src="/logo.svg" alt="" className={styles.logoImage} />
         <div>LombNet</div>
       </Link>
       <div className={styles.menu}>

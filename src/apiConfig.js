@@ -1,3 +1,3 @@
-const API_BASE_URL = "https://rxwpzfj1-7211.euw.devtunnels.ms";
+const API_BASE_URL = "https://lombard-mongo-api.onrender.com/";
 
 export default API_BASE_URL;
